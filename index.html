@@ -1,412 +1,1071 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Hồ sơ cá nhân, hành trình, thành tựu và thư viện minh chứng.">
-<meta name="theme-color" content="#eef7ff">
-<title>Hồ sơ cá nhân | Personal Archive</title>
-<style>
-:root{
-  --bg:#f4f9ff;--surface:rgba(255,255,255,.78);--surface-solid:#fff;
-  --text:#102b49;--muted:#627b95;--line:rgba(39,112,177,.15);
-  --blue:#1677c8;--blue2:#64b7f2;--deep:#0d3d68;
-  --shadow:0 18px 55px rgba(28,91,145,.10);--nav:rgba(247,251,255,.78);
-}
-body.dark{
-  --bg:#071a2c;--surface:rgba(13,39,62,.78);--surface-solid:#102b43;
-  --text:#edf7ff;--muted:#a5bed3;--line:rgba(135,190,231,.16);
-  --blue:#69baff;--blue2:#2d8dd3;--deep:#d8efff;
-  --shadow:0 18px 55px rgba(0,0,0,.22);--nav:rgba(7,26,44,.82);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:90px}
-body{margin:0;font-family:"Times New Roman",Times,serif;background:var(--bg);color:var(--text);line-height:1.6;transition:background .35s,color .35s}
-a{color:inherit;text-decoration:none}
-button,input{font:inherit}
-button{cursor:pointer}
-.container{width:min(1160px,calc(100% - 42px));margin:auto}
-.topbar{position:fixed;z-index:20;top:0;left:0;width:100%;background:var(--nav);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
-.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:22px}
-.brand{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:bold;letter-spacing:.2px}
-.brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#8ed2ff,#176eb8);display:grid;place-items:center;color:white;font-size:19px;box-shadow:0 7px 18px #3996d34a}
-.navlinks{display:flex;gap:25px;align-items:center;color:var(--muted);font-size:16px}
-.navlinks a:hover{color:var(--blue)}
-.nav-actions{display:flex;align-items:center;gap:10px}
-.icon-btn,.menu-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:18px}
-.menu-btn{display:none}
-.hero{min-height:720px;position:relative;overflow:hidden;display:flex;align-items:center;padding:130px 0 100px;background:radial-gradient(ellipse at 78% 22%,rgba(117,196,249,.34),transparent 38%),linear-gradient(135deg,#fff 0%,#eff8ff 48%,#dcefff 100%)}
-body.dark .hero{background:radial-gradient(ellipse at 78% 22%,rgba(36,126,190,.25),transparent 38%),linear-gradient(135deg,#0a2035,#0b2945 55%,#123e62)}
-.wave-bg{position:absolute;inset:auto 0 0;height:58%;width:100%;pointer-events:none;opacity:.9}
-.wave-bg svg{width:200%;height:100%;display:block;animation:waveDrift 28s ease-in-out infinite alternate}
-.wave-bg .w1{fill:#79c5f4;opacity:.23}
-.wave-bg .w2{fill:#3c9fe0;opacity:.23;animation:waveFloat 14s ease-in-out infinite alternate}
-.wave-bg .w3{fill:#fff;opacity:.76;animation:waveFloat 19s ease-in-out infinite alternate-reverse}
-body.dark .wave-bg .w1{fill:#247cb5;opacity:.24}
-body.dark .wave-bg .w2{fill:#1769a3;opacity:.35}
-body.dark .wave-bg .w3{fill:#d9f1ff;opacity:.12}
-@keyframes waveDrift{from{transform:translateX(-4%)}to{transform:translateX(0)}}
-@keyframes waveFloat{from{transform:translateY(12px)}to{transform:translateY(-15px)}}
-.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.25fr .75fr;gap:70px;align-items:center}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--blue);font-size:14px;letter-spacing:2.3px;text-transform:uppercase;font-weight:bold}
-.eyebrow:before{content:"";width:28px;height:1px;background:currentColor}
-.hero h1{font-size:clamp(48px,7vw,86px);line-height:.98;letter-spacing:-1.8px;margin:22px 0 20px;font-weight:normal}
-.hero h1 span{color:var(--blue);font-style:italic}
-.hero-lead{font-size:21px;max-width:650px;color:var(--muted);margin:0 0 30px}
-.hero-buttons{display:flex;gap:13px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 21px;border-radius:999px;border:1px solid var(--line);font-size:16px;transition:.25s}
-.btn-primary{background:linear-gradient(120deg,#218bd2,#1267ad);color:white;border-color:transparent;box-shadow:0 10px 25px #1479bf35}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 28px #1479bf48}
-.btn-ghost{background:var(--surface);color:var(--text)}
-.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
-.profile-wrap{position:relative;justify-self:end;width:min(330px,100%)}
-.profile-frame{aspect-ratio:4/5;border-radius:170px 170px 28px 28px;padding:10px;background:linear-gradient(150deg,#fff,#73bdf0,#d7efff);box-shadow:0 25px 70px rgba(26,103,161,.2);transform:rotate(2deg)}
-.profile-frame img{width:100%;height:100%;object-fit:cover;border-radius:160px 160px 21px 21px;background:#dceefa}
-.profile-note{position:absolute;left:-65px;bottom:35px;background:var(--surface-solid);border:1px solid var(--line);border-radius:15px;padding:14px 18px;box-shadow:var(--shadow);transform:rotate(-3deg)}
-.profile-note strong{display:block;font-size:19px;color:var(--blue)}
-.profile-note small{color:var(--muted);font-size:13px}
-.section{padding:100px 0;position:relative}
-.section-head{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:38px}
-.section-kicker{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:bold}
-.section h2{font-size:clamp(34px,4.5vw,54px);line-height:1.05;font-weight:normal;margin:10px 0 0;letter-spacing:-.7px}
-.section-desc{max-width:450px;color:var(--muted);font-size:17px;margin:0}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:start}
-.about-copy{font-size:19px;color:var(--muted)}
-.about-copy p:first-child{margin-top:0}
-.fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.fact{padding:20px;border:1px solid var(--line);border-radius:17px;background:var(--surface);box-shadow:var(--shadow)}
-.fact b{display:block;color:var(--blue);font-size:27px;font-weight:normal}
-.fact span{color:var(--muted);font-size:15px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:45px}
-.stat{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--surface);text-align:center}
-.stat strong{display:block;font-size:34px;color:var(--blue);font-weight:normal}
-.stat span{color:var(--muted);font-size:15px}
-.soft-section{background:linear-gradient(180deg,transparent,rgba(108,181,232,.08),transparent)}
-.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:25px}
-.search{flex:1;min-width:220px;position:relative}
-.search input{width:100%;padding:13px 17px 13px 43px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--text);outline:none}
-.search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #4aa4e51a}
-.search:before{content:"⌕";position:absolute;left:17px;top:5px;font-size:26px;color:var(--muted)}
-.filter{padding:12px 16px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--text)}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:19px}
-.card{overflow:hidden;border:1px solid var(--line);border-radius:19px;background:var(--surface);box-shadow:var(--shadow);transition:transform .25s,border-color .25s}
-.card:hover{transform:translateY(-6px);border-color:#69b6eb}
-.card-image{height:205px;background:linear-gradient(135deg,#eaf6ff,#b9e1fb);overflow:hidden;cursor:pointer}
-.card-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.card:hover .card-image img{transform:scale(1.04)}
-.card-body{padding:20px}
-.card-meta{display:flex;justify-content:space-between;gap:10px;color:var(--blue);font-size:13px;text-transform:uppercase;letter-spacing:1px}
-.card h3{font-size:23px;font-weight:normal;margin:10px 0 7px}
-.card p{margin:0;color:var(--muted);font-size:16px}
-.card-link{display:inline-block;margin-top:16px;color:var(--blue);font-size:15px}
-.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;border:1px dashed var(--line);border-radius:18px}
-.timeline{position:relative;max-width:850px;margin:0 auto}
-.timeline:before{content:"";position:absolute;left:112px;top:5px;bottom:5px;width:1px;background:linear-gradient(var(--blue2),transparent)}
-.timeline-item{display:grid;grid-template-columns:90px 1fr;gap:45px;position:relative;padding:0 0 32px}
-.timeline-item:before{content:"";position:absolute;left:107px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--blue);border:4px solid var(--bg);box-shadow:0 0 0 1px var(--blue)}
-.timeline-year{text-align:right;color:var(--blue);font-size:19px}
-.timeline-content{padding:0 0 0 25px}
-.timeline-content h3{font-size:22px;font-weight:normal;margin:0 0 5px}
-.timeline-content p{margin:0;color:var(--muted)}
-.doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.doc{display:flex;align-items:center;gap:15px;padding:19px;border:1px solid var(--line);border-radius:16px;background:var(--surface);transition:.2s}
-.doc:hover{border-color:var(--blue);transform:translateY(-3px)}
-.doc-icon{width:47px;height:52px;flex:none;border-radius:10px;background:#e4f3ff;color:#1878bd;display:grid;place-items:center;font-size:15px;font-weight:bold}
-body.dark .doc-icon{background:#173e5e;color:#9bd5ff}
-.doc strong{display:block;font-size:18px;font-weight:normal}
-.doc small{color:var(--muted)}
-.contact-box{padding:55px;border-radius:27px;background:linear-gradient(125deg,#eaf6ff,#cce8fb);color:#123b60;position:relative;overflow:hidden}
-body.dark .contact-box{background:linear-gradient(125deg,#123b5b,#0b2b46);color:#e8f6ff}
-.contact-box:after{content:"";position:absolute;width:340px;height:340px;border:1px solid #fff8;border-radius:50%;right:-70px;top:-190px;box-shadow:0 0 0 35px #fff2,0 0 0 70px #fff1}
-.contact-box h2{font-size:clamp(34px,5vw,56px);font-weight:normal;margin:0 0 12px;position:relative;z-index:1}
-.contact-box p{font-size:18px;max-width:600px;color:inherit;opacity:.75;position:relative;z-index:1}
-.contact-box .btn{position:relative;z-index:1}
-footer{padding:28px 0;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
-.footer-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.modal{position:fixed;inset:0;background:#061a2bd9;z-index:50;display:none;align-items:center;justify-content:center;padding:25px}
-.modal.open{display:flex}
-.modal img{max-width:min(100%,1000px);max-height:85vh;object-fit:contain;border-radius:12px;box-shadow:0 20px 70px #0008}
-.modal-close{position:absolute;right:25px;top:20px;color:white;background:#ffffff20;border:1px solid #ffffff55;border-radius:50%;width:43px;height:43px;font-size:24px}
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
-.reveal.visible{opacity:1;transform:translateY(0)}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
-@media(max-width:850px){
- .navlinks{display:none;position:absolute;top:76px;left:0;width:100%;padding:18px 24px 23px;background:var(--nav);border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start;gap:15px}
- .navlinks.open{display:flex}.menu-btn{display:grid}
- .hero-grid{grid-template-columns:1fr .7fr;gap:25px}.hero{min-height:650px}.hero-content{padding:0}
- .cards{grid-template-columns:repeat(2,1fr)}.doc-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:620px){
- .container{width:min(100% - 30px,1160px)}.nav{height:67px}.brand{font-size:17px}.navlinks{top:67px}
- .hero{padding:115px 0 80px;min-height:auto}.hero-grid{grid-template-columns:1fr;gap:40px}
- .hero h1{font-size:55px}.hero-lead{font-size:18px}.profile-wrap{width:210px;justify-self:center;margin:0 auto}
- .profile-note{left:-50px;bottom:18px;padding:10px 13px}
- .section{padding:72px 0}.section-head{display:block}.section-desc{margin-top:15px}
- .about-grid{grid-template-columns:1fr;gap:25px}.stats{grid-template-columns:repeat(2,1fr)}
- .cards,.doc-grid{grid-template-columns:1fr}.card-image{height:220px}
- .timeline:before{left:69px}.timeline-item{grid-template-columns:52px 1fr;gap:34px}
- .timeline-item:before{left:64px}.timeline-year{font-size:16px}.timeline-content{padding-left:8px}
- .contact-box{padding:32px 25px}.footer-inner{display:block}.footer-inner span{display:block;margin:5px 0}
-}
-</style>
-</head>
-<body>
-<header class="topbar">
-  <div class="container nav">
-    <a class="brand" href="#home"><span class="brand-mark">✦</span><span>PERSONAL ARCHIVE</span></a>
-    <nav class="navlinks" id="navLinks">
-      <a href="#about">Giới thiệu</a><a href="#achievements">Thành tựu</a><a href="#journey">Hành trình</a><a href="#documents">Minh chứng</a><a href="#contact">Liên hệ</a>
-    </nav>
-    <div class="nav-actions">
-      <button class="icon-btn" id="themeToggle" aria-label="Đổi giao diện" title="Sáng / tối">☾</button>
-      <button class="menu-btn" id="menuToggle" aria-label="Mở menu">☰</button>
-    </div>
-  </div>
-</header>
+  <!-- =========================================================
+       1. THÔNG TIN CƠ BẢN CỦA WEBSITE
+       Chỉnh các dòng trong phần này để đổi tên, mô tả, màu trình duyệt.
+       ========================================================= -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hồ sơ cá nhân, hành trình, thành tựu và thư viện minh chứng.">
+  <meta name="theme-color" content="#eef7ff">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hồ sơ cá nhân | Personal Archive">
+  <meta property="og:description" content="Nơi lưu giữ hành trình, thành tựu và những dấu mốc đáng nhớ.">
+  <meta property="og:image" content="">
+  <title>Hồ sơ cá nhân | Personal Archive</title>
 
-<main>
-<section class="hero" id="home">
-  <div class="wave-bg" aria-hidden="true">
-    <svg viewBox="0 0 1440 420" preserveAspectRatio="none">
-      <path class="w1" d="M0 190 C260 110 420 290 720 205 C1000 125 1190 160 1440 85 L1440 420 L0 420Z"/>
-      <path class="w2" d="M0 250 C240 160 450 330 720 255 C980 180 1190 245 1440 155 L1440 420 L0 420Z"/>
-      <path class="w3" d="M0 300 C270 220 480 370 760 295 C1040 220 1220 300 1440 230 L1440 420 L0 420Z"/>
-    </svg>
-  </div>
-  <div class="container hero-grid">
-    <div class="hero-content">
-      <div class="eyebrow">Hồ sơ cá nhân chính thức</div>
-      <h1>Xin chào,<br>tôi là <span>Nguyễn Văn A.</span></h1>
-      <p class="hero-lead">Nơi lưu giữ hành trình, những dấu mốc đáng nhớ và các thành tựu đã tạo nên con người tôi hôm nay.</p>
-      <div class="hero-buttons">
-        <a class="btn btn-primary" href="#achievements">Khám phá thành tựu <span>↗</span></a>
-        <a class="btn btn-ghost" href="#about">Tìm hiểu về tôi</a>
-      </div>
-    </div>
-    <div class="profile-wrap">
-      <!-- Thay assets/avatar.jpg bằng ảnh chân dung của bạn -->
-      <div class="profile-frame"><img src="assets/avatar.jpg" alt="Ảnh chân dung cá nhân" onerror="this.style.opacity='.12';this.alt='Thêm ảnh của bạn tại assets/avatar.jpg'"></div>
-      <div class="profile-note"><strong>Hành trình không ngừng</strong><small>Ghi dấu từng bước trưởng thành</small></div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="about">
-  <div class="container">
-    <div class="section-head reveal"><div><div class="section-kicker">01 / About</div><h2>Đôi nét về tôi</h2></div><p class="section-desc">Một hồ sơ được xây dựng để lưu giữ những điều có ý nghĩa, thể hiện hành trình và giá trị cá nhân.</p></div>
-    <div class="about-grid">
-      <div class="about-copy reveal">
-        <p>Tôi tin rằng mỗi thành tựu đều là kết quả của sự nỗ lực, học hỏi và những trải nghiệm đáng quý. Website này là nơi tôi hệ thống hóa hành trình của mình một cách rõ ràng, minh bạch và có thể tra cứu lâu dài.</p>
-        <p>Tại đây, bạn có thể tìm hiểu về tôi, xem các dấu mốc quan trọng và tham khảo những tài liệu minh chứng được chia sẻ công khai.</p>
-      </div>
-      <div class="fact-grid reveal">
-        <div class="fact"><b>01</b><span>Hồ sơ cá nhân</span></div>
-        <div class="fact"><b>02</b><span>Thành tựu & giải thưởng</span></div>
-        <div class="fact"><b>03</b><span>Hành trình phát triển</span></div>
-        <div class="fact"><b>04</b><span>Tài liệu minh chứng</span></div>
-      </div>
-    </div>
-    <div class="stats reveal">
-      <div class="stat"><strong>00+</strong><span>Thành tựu</span></div>
-      <div class="stat"><strong>00+</strong><span>Chứng nhận</span></div>
-      <div class="stat"><strong>00</strong><span>Năm hành trình</span></div>
-      <div class="stat"><strong>∞</strong><span>Dấu mốc tiếp theo</span></div>
-    </div>
-  </div>
-</section>
-
-<section class="section soft-section" id="achievements">
-  <div class="container">
-    <div class="section-head reveal"><div><div class="section-kicker">02 / Selected work</div><h2>Thành tựu nổi bật</h2></div><p class="section-desc">Những dấu mốc tiêu biểu được chọn lọc và lưu trữ cùng thông tin minh chứng.</p></div>
-    <div class="toolbar reveal">
-      <label class="search"><input id="searchInput" type="search" placeholder="Tìm theo tên, năm hoặc nội dung..." aria-label="Tìm thành tựu"></label>
-      <select class="filter" id="categoryFilter" aria-label="Lọc danh mục"><option value="all">Tất cả danh mục</option><option value="Giải thưởng">Giải thưởng</option><option value="Chứng nhận">Chứng nhận</option><option value="Hoạt động">Hoạt động</option><option value="Khác">Khác</option></select>
-    </div>
-    <div class="cards" id="achievementGrid"></div>
-  </div>
-</section>
-
-<section class="section" id="journey">
-  <div class="container">
-    <div class="section-head reveal"><div><div class="section-kicker">03 / Timeline</div><h2>Hành trình phát triển</h2></div><p class="section-desc">Mỗi năm là một chương mới, mỗi trải nghiệm là một phần của hành trình.</p></div>
-    <div class="timeline" id="timeline"></div>
-  </div>
-</section>
-
-<section class="section soft-section" id="documents">
-  <div class="container">
-    <div class="section-head reveal"><div><div class="section-kicker">04 / Evidence library</div><h2>Thư viện minh chứng</h2></div><p class="section-desc">Tài liệu được phân loại rõ ràng để thuận tiện tra cứu và tham khảo.</p></div>
-    <div class="doc-grid" id="documentGrid"></div>
-  </div>
-</section>
-
-<section class="section" id="contact">
-  <div class="container">
-    <div class="contact-box reveal">
-      <div class="section-kicker">05 / Get in touch</div>
-      <h2>Kết nối và trao đổi</h2>
-      <p>Cảm ơn bạn đã dành thời gian tìm hiểu hồ sơ của tôi. Nếu cần thêm thông tin hoặc muốn trao đổi, vui lòng liên hệ qua kênh bên dưới.</p>
-      <a class="btn btn-primary" href="mailto:your-email@example.com">Gửi email <span>↗</span></a>
-    </div>
-  </div>
-</section>
-</main>
-
-<footer><div class="container footer-inner"><span>© <span id="yearNow"></span> Personal Archive. Bảo lưu mọi quyền.</span><span>Được xây dựng để lưu giữ hành trình dài lâu.</span></div></footer>
-
-<div class="modal" id="imageModal" role="dialog" aria-modal="true" aria-label="Xem ảnh lớn">
-  <button class="modal-close" id="modalClose" aria-label="Đóng">×</button><img id="modalImage" src="" alt="Ảnh minh chứng phóng to">
-</div>
-
-<script>
-/* =========================================================
-   KHU VỰC DỮ LIỆU: BẠN CHỈ CẦN SỬA CÁC MỤC BÊN DƯỚI
-   Đường dẫn ảnh/PDF tính từ vị trí file index.html.
-   ========================================================= */
-
-const achievements = [
-  {
-    title: "Tên thành tựu thứ nhất",
-    year: "2026",
-    category: "Giải thưởng",
-    description: "Viết mô tả ngắn về thành tựu, đơn vị trao tặng hoặc ý nghĩa của dấu mốc này.",
-    image: "assets/achievements/achievement-01.jpg",
-    document: "assets/documents/achievement-01.pdf",
-    featured: true
-  },
-  {
-    title: "Chứng nhận tiêu biểu",
-    year: "2025",
-    category: "Chứng nhận",
-    description: "Thêm thông tin về chứng nhận, khóa học hoặc chương trình đã tham gia.",
-    image: "assets/achievements/achievement-02.jpg",
-    document: "assets/documents/achievement-02.pdf",
-    featured: false
-  },
-  {
-    title: "Hoạt động đáng nhớ",
-    year: "2024",
-    category: "Hoạt động",
-    description: "Ghi lại hoạt động, sự kiện hoặc dự án có ý nghĩa trong hành trình của bạn.",
-    image: "assets/achievements/achievement-03.jpg",
-    document: "",
-    featured: false
-  }
-];
-
-const timelineItems = [
-  { year: "2026", title: "Một dấu mốc mới", description: "Cập nhật cột mốc, thành tựu hoặc định hướng trong năm." },
-  { year: "2025", title: "Tiếp tục phát triển", description: "Ghi lại những trải nghiệm và kết quả đáng nhớ." },
-  { year: "2024", title: "Khởi đầu một chặng đường", description: "Bổ sung câu chuyện cho giai đoạn này." }
-];
-
-const documents = [
-  { title: "Hồ sơ thành tựu", type: "PDF", detail: "Tài liệu tổng hợp", file: "assets/documents/achievement-01.pdf" },
-  { title: "Chứng nhận tiêu biểu", type: "PDF", detail: "Bằng chứng và chứng nhận", file: "assets/documents/achievement-02.pdf" },
-  { title: "Hình ảnh hoạt động", type: "IMG", detail: "Tư liệu hình ảnh", file: "assets/achievements/achievement-03.jpg" }
-];
-
-/* =========================================================
-   HIỂN THỊ THÀNH TỰU, TIMELINE VÀ TÀI LIỆU
-   ========================================================= */
-const achievementGrid = document.getElementById("achievementGrid");
-
-function renderAchievements() {
-  const query = document.getElementById("searchInput").value.trim().toLowerCase();
-  const category = document.getElementById("categoryFilter").value;
-  const filtered = achievements.filter(item => {
-    const haystack = `${item.title} ${item.year} ${item.category} ${item.description}`.toLowerCase();
-    return haystack.includes(query) && (category === "all" || item.category === category);
-  });
-
-  achievementGrid.innerHTML = filtered.length ? filtered.map(item => `
-    <article class="card reveal visible">
-      <div class="card-image" data-image="${item.image}" role="button" tabindex="0" aria-label="Xem ảnh ${item.title}">
-        <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.style.opacity='.12';this.alt='Thêm ảnh tại ${item.image}'">
-      </div>
-      <div class="card-body">
-        <div class="card-meta"><span>${item.category}</span><span>${item.year}</span></div>
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-        ${item.document ? `<a class="card-link" href="${item.document}" target="_blank" rel="noopener">Xem tài liệu ↗</a>` : ""}
-      </div>
-    </article>
-  `).join("") : `<div class="empty">Không tìm thấy thành tựu phù hợp.</div>`;
-}
-
-document.getElementById("searchInput").addEventListener("input", renderAchievements);
-document.getElementById("categoryFilter").addEventListener("change", renderAchievements);
-
-document.getElementById("timeline").innerHTML = timelineItems.map(item => `
-  <div class="timeline-item reveal">
-    <div class="timeline-year">${item.year}</div>
-    <div class="timeline-content"><h3>${item.title}</h3><p>${item.description}</p></div>
-  </div>
-`).join("");
-
-document.getElementById("documentGrid").innerHTML = documents.map(doc => `
-  <a class="doc reveal" href="${doc.file}" target="_blank" rel="noopener">
-    <span class="doc-icon">${doc.type}</span>
-    <span><strong>${doc.title}</strong><small>${doc.detail}</small></span>
-  </a>
-`).join("");
-
-renderAchievements();
-
-/* =========================================================
-   THEME: LƯU LỰA CHỌN SÁNG/TỐI TRÊN TRÌNH DUYỆT
-   ========================================================= */
-const themeToggle = document.getElementById("themeToggle");
-const savedTheme = localStorage.getItem("personalArchiveTheme");
-if (savedTheme === "dark") document.body.classList.add("dark");
-function updateThemeIcon() {
-  themeToggle.textContent = document.body.classList.contains("dark") ? "☀" : "☾";
-}
-updateThemeIcon();
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-  localStorage.setItem("personalArchiveTheme", document.body.classList.contains("dark") ? "dark" : "light");
-  updateThemeIcon();
-});
-
-/* MENU MOBILE */
-const menuToggle = document.getElementById("menuToggle");
-const navLinks = document.getElementById("navLinks");
-menuToggle.addEventListener("click", () => navLinks.classList.toggle("open"));
-navLinks.querySelectorAll("a").forEach(link => link.addEventListener("click", () => navLinks.classList.remove("open")));
-
-/* XEM ẢNH PHÓNG TO */
-const imageModal = document.getElementById("imageModal");
-const modalImage = document.getElementById("modalImage");
-function openImage(src) {
-  modalImage.src = src;
-  imageModal.classList.add("open");
-}
-achievementGrid.addEventListener("click", event => {
-  const imageBox = event.target.closest(".card-image");
-  if (imageBox) openImage(imageBox.dataset.image);
-});
-achievementGrid.addEventListener("keydown", event => {
-  if ((event.key === "Enter" || event.key === " ") && event.target.classList.contains("card-image")) {
-    event.preventDefault(); openImage(event.target.dataset.image);
-  }
-});
-document.getElementById("modalClose").addEventListener("click", () => imageModal.classList.remove("open"));
-imageModal.addEventListener("click", event => { if (event.target === imageModal) imageModal.classList.remove("open"); });
-document.addEventListener("keydown", event => { if (event.key === "Escape") imageModal.classList.remove("open"); });
-
-/* HIỆU ỨNG HIỆN KHI CUỘN */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target);
+  <!-- =========================================================
+       2. CSS - TOÀN BỘ GIAO DIỆN
+       Màu sắc chính được điều khiển bằng các biến trong :root.
+       ========================================================= -->
+  <style>
+    /* ---------- 2.1. BẢNG MÀU CHẾ ĐỘ SÁNG ---------- */
+    :root {
+      color-scheme: light;
+      --bg: #f4f9ff;                         /* Màu nền toàn website */
+      --surface: rgba(255,255,255,.82);      /* Nền thẻ có độ trong suốt */
+      --surface-solid: #ffffff;              /* Nền thẻ không trong suốt */
+      --text: #102b49;                        /* Màu chữ chính */
+      --muted: #627b95;                       /* Màu chữ phụ */
+      --line: rgba(39,112,177,.16);           /* Màu đường viền */
+      --blue: #1677c8;                        /* Màu xanh chủ đạo */
+      --blue-2: #64b7f2;                      /* Màu xanh phụ */
+      --deep: #0d3d68;                        /* Màu xanh đậm */
+      --shadow: 0 18px 55px rgba(28,91,145,.10);
+      --nav: rgba(247,251,255,.82);           /* Nền thanh điều hướng */
+      --radius: 20px;                         /* Bo góc dùng chung */
+      --container: 1160px;                    /* Chiều rộng nội dung tối đa */
+      --header-height: 76px;                  /* Chiều cao thanh menu */
     }
-  });
-}, { threshold: .12 });
-document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 
-document.getElementById("yearNow").textContent = new Date().getFullYear();
-</script>
+    /* ---------- 2.2. BẢNG MÀU CHẾ ĐỘ TỐI ---------- */
+    body.dark {
+      color-scheme: dark;
+      --bg: #071a2c;
+      --surface: rgba(13,39,62,.84);
+      --surface-solid: #102b43;
+      --text: #edf7ff;
+      --muted: #a5bed3;
+      --line: rgba(135,190,231,.18);
+      --blue: #69baff;
+      --blue-2: #2d8dd3;
+      --deep: #d8efff;
+      --shadow: 0 18px 55px rgba(0,0,0,.24);
+      --nav: rgba(7,26,44,.86);
+    }
+
+    /* ---------- 2.3. THIẾT LẬP CHUNG ---------- */
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-height) + 18px);
+    }
+    body {
+      margin: 0;
+      font-family: "Times New Roman", Times, serif; /* Font chữ toàn website */
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      transition: background .35s ease, color .35s ease;
+    }
+    body, button, input, select { font-family: "Times New Roman", Times, serif; }
+    img { max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid var(--blue-2);
+      outline-offset: 3px;
+    }
+    .container { width: min(var(--container), calc(100% - 42px)); margin: 0 auto; }
+    .skip-link {
+      position: fixed; left: 12px; top: -60px; z-index: 100;
+      padding: 10px 16px; border-radius: 10px; background: var(--surface-solid);
+      color: var(--text); box-shadow: var(--shadow);
+    }
+    .skip-link:focus { top: 12px; }
+
+    /* ---------- 2.4. THANH ĐIỀU HƯỚNG ---------- */
+    .topbar {
+      position: fixed; z-index: 30; inset: 0 0 auto;
+      background: var(--nav); backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      min-height: var(--header-height); display: flex; align-items: center;
+      justify-content: space-between; gap: 22px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 19px; font-weight: bold; letter-spacing: .2px; }
+    .brand-mark {
+      width: 40px; height: 40px; flex: 0 0 40px; border-radius: 13px;
+      display: grid; place-items: center; color: white; font-size: 20px;
+      background: linear-gradient(145deg, #8ed2ff, #176eb8);
+      box-shadow: 0 7px 18px rgba(57,150,211,.30);
+    }
+    .navlinks { display: flex; align-items: center; gap: 25px; color: var(--muted); font-size: 16px; }
+    .navlinks a { transition: color .2s ease; }
+    .navlinks a:hover, .navlinks a[aria-current="location"] { color: var(--blue); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn, .menu-btn {
+      width: 42px; height: 42px; border: 1px solid var(--line);
+      border-radius: 50%; display: grid; place-items: center;
+      background: var(--surface); color: var(--text); font-size: 19px;
+    }
+    .menu-btn { display: none; border-radius: 12px; }
+
+    /* ---------- 2.5. KHU VỰC GIỚI THIỆU ĐẦU TRANG ---------- */
+    .hero {
+      min-height: 730px; position: relative; overflow: hidden;
+      display: flex; align-items: center; padding: 135px 0 105px;
+      background:
+        radial-gradient(ellipse at 78% 22%, rgba(117,196,249,.38), transparent 39%),
+        linear-gradient(135deg, #ffffff 0%, #eff8ff 48%, #dcefff 100%);
+      isolation: isolate;
+    }
+    body.dark .hero {
+      background:
+        radial-gradient(ellipse at 78% 22%, rgba(36,126,190,.30), transparent 39%),
+        linear-gradient(135deg, #0a2035, #0b2945 55%, #123e62);
+    }
+    .hero-glow {
+      position: absolute; width: 430px; height: 430px; border-radius: 50%;
+      right: 4%; top: 9%; z-index: -1; pointer-events: none;
+      background: radial-gradient(circle, rgba(91,181,239,.19), transparent 68%);
+      filter: blur(4px);
+    }
+    .wave-bg {
+      position: absolute; inset: auto 0 0; width: 100%; height: 58%;
+      pointer-events: none; z-index: -1; opacity: .92; overflow: hidden;
+    }
+    .wave-bg svg { width: 200%; height: 100%; display: block; animation: waveDrift 34s ease-in-out infinite alternate; }
+    .wave-bg .wave-one { fill: #79c5f4; opacity: .24; }
+    .wave-bg .wave-two { fill: #3c9fe0; opacity: .22; animation: waveFloat 15s ease-in-out infinite alternate; }
+    .wave-bg .wave-three { fill: #ffffff; opacity: .76; animation: waveFloat 20s ease-in-out infinite alternate-reverse; }
+    body.dark .wave-bg .wave-one { fill: #247cb5; opacity: .25; }
+    body.dark .wave-bg .wave-two { fill: #1769a3; opacity: .36; }
+    body.dark .wave-bg .wave-three { fill: #d9f1ff; opacity: .13; }
+    @keyframes waveDrift { from { transform: translateX(-4%); } to { transform: translateX(0); } }
+    @keyframes waveFloat { from { transform: translateY(12px); } to { transform: translateY(-15px); } }
+    .hero-grid {
+      position: relative; z-index: 1; display: grid;
+      grid-template-columns: 1.25fr .75fr; gap: 70px; align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      color: var(--blue); font-size: 14px; letter-spacing: 2.2px;
+      text-transform: uppercase; font-weight: bold;
+    }
+    .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+    .hero h1 {
+      max-width: 850px; font-size: clamp(48px, 7vw, 86px);
+      line-height: .99; letter-spacing: -1.8px; margin: 22px 0 20px; font-weight: normal;
+    }
+    .hero h1 .name-highlight { color: var(--blue); font-style: italic; }
+    .hero-lead { max-width: 650px; margin: 0 0 30px; color: var(--muted); font-size: 21px; }
+    .hero-buttons { display: flex; flex-wrap: wrap; gap: 13px; }
+    .btn {
+      min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 11px 21px; border: 1px solid var(--line); border-radius: 999px;
+      font-size: 16px; transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      color: #fff; border-color: transparent;
+      background: linear-gradient(120deg, #218bd2, #1267ad);
+      box-shadow: 0 10px 25px rgba(20,121,191,.22);
+    }
+    .btn-primary:hover { box-shadow: 0 14px 28px rgba(20,121,191,.32); }
+    .btn-ghost { background: var(--surface); color: var(--text); }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+    .profile-wrap { position: relative; justify-self: end; width: min(340px, 100%); }
+    .profile-frame {
+      aspect-ratio: 4 / 5; padding: 10px; border-radius: 175px 175px 30px 30px;
+      background: linear-gradient(150deg, #fff, #73bdf0, #d7efff);
+      box-shadow: 0 25px 70px rgba(26,103,161,.20); transform: rotate(2deg);
+    }
+    .profile-frame img {
+      display: block; width: 100%; height: 100%; object-fit: cover;
+      border-radius: 165px 165px 22px 22px; background: linear-gradient(145deg, #dceefa, #a8d7f5);
+    }
+    .avatar-fallback {
+      width: 100%; height: 100%; display: grid; place-items: center; text-align: center;
+      padding: 25px; color: #145b91; font-size: 22px; border-radius: inherit;
+      background: linear-gradient(145deg, #eaf7ff, #a8d7f5);
+    }
+    .profile-note {
+      position: absolute; left: -68px; bottom: 34px; padding: 14px 18px;
+      border: 1px solid var(--line); border-radius: 15px; background: var(--surface-solid);
+      box-shadow: var(--shadow); transform: rotate(-3deg);
+    }
+    .profile-note strong { display: block; color: var(--blue); font-size: 19px; }
+    .profile-note small { color: var(--muted); font-size: 13px; }
+
+    /* ---------- 2.6. KHUNG CÁC PHẦN NỘI DUNG ---------- */
+    .section { position: relative; padding: 100px 0; }
+    .soft-section { background: linear-gradient(180deg, transparent, rgba(108,181,232,.08), transparent); }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: end;
+      gap: 25px; margin-bottom: 38px;
+    }
+    .section-kicker { color: var(--blue); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; }
+    .section h2 { margin: 10px 0 0; font-size: clamp(34px, 4.5vw, 54px); line-height: 1.08; font-weight: normal; letter-spacing: -.7px; }
+    .section-desc { max-width: 450px; margin: 0; color: var(--muted); font-size: 17px; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 55px; align-items: start; }
+    .about-copy { color: var(--muted); font-size: 19px; }
+    .about-copy p:first-child { margin-top: 0; }
+    .fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .fact, .stat {
+      padding: 20px; border: 1px solid var(--line); border-radius: 17px;
+      background: var(--surface); box-shadow: var(--shadow);
+    }
+    .fact b { display: block; color: var(--blue); font-size: 27px; font-weight: normal; }
+    .fact span, .stat span { color: var(--muted); font-size: 15px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 45px; }
+    .stat { text-align: center; }
+    .stat strong { display: block; color: var(--blue); font-size: 34px; font-weight: normal; }
+
+    /* ---------- 2.7. TÌM KIẾM VÀ THẺ THÀNH TỰU ---------- */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 25px; }
+    .search { position: relative; flex: 1; min-width: 220px; }
+    .search input {
+      width: 100%; padding: 13px 17px 13px 43px; border: 1px solid var(--line);
+      border-radius: 999px; outline: none; background: var(--surface); color: var(--text);
+    }
+    .search input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74,164,229,.12); }
+    .search::before { content: "⌕"; position: absolute; left: 17px; top: 4px; color: var(--muted); font-size: 26px; }
+    .filter {
+      padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px;
+      background: var(--surface-solid); color: var(--text);
+    }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 19px; }
+    .card {
+      overflow: hidden; border: 1px solid var(--line); border-radius: 19px;
+      background: var(--surface); box-shadow: var(--shadow);
+      transition: transform .25s ease, border-color .25s ease;
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--blue-2); }
+    .card-image {
+      height: 205px; overflow: hidden; display: grid; place-items: center;
+      background: linear-gradient(135deg, #eaf6ff, #b9e1fb);
+    }
+    .card-image img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .5s ease; }
+    .card:hover .card-image img { transform: scale(1.04); }
+    .image-placeholder { padding: 20px; color: #246b9d; text-align: center; font-size: 17px; }
+    .card-body { padding: 20px; }
+    .card-meta { display: flex; justify-content: space-between; gap: 10px; color: var(--blue); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+    .card h3 { margin: 10px 0 7px; font-size: 23px; font-weight: normal; }
+    .card p { margin: 0; color: var(--muted); font-size: 16px; }
+    .card-link { display: inline-block; margin-top: 16px; color: var(--blue); font-size: 15px; }
+    .empty { grid-column: 1 / -1; padding: 40px; border: 1px dashed var(--line); border-radius: 18px; color: var(--muted); text-align: center; }
+
+    /* ---------- 2.8. DÒNG THỜI GIAN ---------- */
+    .timeline { position: relative; max-width: 850px; margin: 0 auto; }
+    .timeline::before {
+      content: ""; position: absolute; left: 112px; top: 5px; bottom: 5px;
+      width: 1px; background: linear-gradient(var(--blue-2), transparent);
+    }
+    .timeline-item { position: relative; display: grid; grid-template-columns: 90px 1fr; gap: 45px; padding: 0 0 32px; }
+    .timeline-item::before {
+      content: ""; position: absolute; left: 107px; top: 7px; width: 11px; height: 11px;
+      border: 4px solid var(--bg); border-radius: 50%; background: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue);
+    }
+    .timeline-year { color: var(--blue); text-align: right; font-size: 19px; }
+    .timeline-content { padding-left: 25px; }
+    .timeline-content h3 { margin: 0 0 5px; font-size: 22px; font-weight: normal; }
+    .timeline-content p { margin: 0; color: var(--muted); }
+
+    /* ---------- 2.9. THƯ VIỆN TÀI LIỆU ---------- */
+    .doc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .doc {
+      display: flex; align-items: center; gap: 15px; padding: 19px;
+      border: 1px solid var(--line); border-radius: 16px; background: var(--surface);
+      transition: transform .2s ease, border-color .2s ease;
+    }
+    .doc:hover { transform: translateY(-3px); border-color: var(--blue); }
+    .doc-icon {
+      width: 47px; height: 52px; flex: 0 0 47px; display: grid; place-items: center;
+      border-radius: 10px; background: #e4f3ff; color: #1878bd; font-size: 15px; font-weight: bold;
+    }
+    body.dark .doc-icon { background: #173e5e; color: #9bd5ff; }
+    .doc strong { display: block; font-size: 18px; font-weight: normal; }
+    .doc small { color: var(--muted); }
+
+    /* ---------- 2.10. LIÊN HỆ VÀ CHÂN TRANG ---------- */
+    .contact-box {
+      position: relative; overflow: hidden; padding: 55px; border-radius: 27px;
+      color: #123b60; background: linear-gradient(125deg, #eaf6ff, #cce8fb);
+    }
+    body.dark .contact-box { color: #e8f6ff; background: linear-gradient(125deg, #123b5b, #0b2b46); }
+    .contact-box::after {
+      content: ""; position: absolute; width: 340px; height: 340px; right: -70px; top: -190px;
+      border: 1px solid rgba(255,255,255,.55); border-radius: 50%;
+      box-shadow: 0 0 0 35px rgba(255,255,255,.12), 0 0 0 70px rgba(255,255,255,.07);
+      pointer-events: none;
+    }
+    .contact-box h2 { position: relative; z-index: 1; margin: 0 0 12px; font-size: clamp(34px, 5vw, 56px); font-weight: normal; }
+    .contact-box p { position: relative; z-index: 1; max-width: 600px; color: inherit; opacity: .78; font-size: 18px; }
+    .contact-box .btn { position: relative; z-index: 1; }
+    .social-links { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .social-links a { padding: 8px 13px; border: 1px solid currentColor; border-radius: 999px; }
+    footer { padding: 28px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+
+    /* ---------- 2.11. HỘP XEM ẢNH LỚN ---------- */
+    .modal {
+      position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center;
+      padding: 25px; background: rgba(6,26,43,.86);
+    }
+    .modal.open { display: flex; }
+    .modal img { max-width: min(100%, 1100px); max-height: 85vh; object-fit: contain; border-radius: 12px; box-shadow: 0 20px 70px rgba(0,0,0,.5); }
+    .modal-close {
+      position: absolute; top: 20px; right: 25px; width: 43px; height: 43px;
+      border: 1px solid rgba(255,255,255,.45); border-radius: 50%;
+      color: white; background: rgba(255,255,255,.12); font-size: 24px;
+    }
+
+    /* ---------- 2.12. HIỆU ỨNG KHI CUỘN ---------- */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- 2.13. RESPONSIVE: MÁY TÍNH BẢNG ---------- */
+    @media (max-width: 900px) {
+      .navlinks { gap: 15px; }
+      .hero-grid { gap: 35px; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .doc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ---------- 2.14. RESPONSIVE: ĐIỆN THOẠI ---------- */
+    @media (max-width: 760px) {
+      :root { --header-height: 68px; }
+      .navlinks {
+        position: absolute; top: var(--header-height); left: 0; width: 100%;
+        display: none; flex-direction: column; align-items: flex-start; gap: 15px;
+        padding: 18px 24px 23px; background: var(--nav); border-bottom: 1px solid var(--line);
+      }
+      .navlinks.open { display: flex; }
+      .menu-btn { display: grid; }
+      .hero { min-height: auto; padding: 120px 0 85px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 42px; }
+      .profile-wrap { width: 230px; justify-self: center; }
+      .profile-note { left: -45px; bottom: 18px; padding: 10px 13px; }
+      .section { padding: 75px 0; }
+      .section-head { display: block; }
+      .section-desc { margin-top: 15px; }
+      .about-grid { grid-template-columns: 1fr; gap: 25px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .timeline::before { left: 69px; }
+      .timeline-item { grid-template-columns: 52px 1fr; gap: 34px; }
+      .timeline-item::before { left: 64px; }
+      .timeline-year { font-size: 16px; }
+      .timeline-content { padding-left: 8px; }
+      .contact-box { padding: 34px 25px; }
+    }
+    @media (max-width: 560px) {
+      .container { width: min(100% - 30px, var(--container)); }
+      .brand { font-size: 16px; }
+      .hero h1 { font-size: clamp(43px, 12vw, 58px); }
+      .hero-lead { font-size: 18px; }
+      .cards, .doc-grid { grid-template-columns: 1fr; }
+      .card-image { height: 220px; }
+      .footer-inner { display: block; }
+      .footer-inner span { display: block; margin: 5px 0; }
+    }
+
+    /* ---------- 2.15. TÔN TRỌNG CÀI ĐẶT GIẢM CHUYỂN ĐỘNG ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#mainContent">Bỏ qua menu, đến nội dung</a>
+
+  <!-- =========================================================
+       3. THANH MENU
+       Đổi chữ trong các thẻ a nếu muốn đổi tên mục menu.
+       href="#..." phải trùng với id của section bên dưới.
+       ========================================================= -->
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="#home" aria-label="Về đầu trang">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span id="brandName">PERSONAL ARCHIVE</span>
+      </a>
+
+      <nav class="navlinks" id="navLinks" aria-label="Menu chính">
+        <a href="#about">Giới thiệu</a>
+        <a href="#achievements">Thành tựu</a>
+        <a href="#journey">Hành trình</a>
+        <a href="#documents">Minh chứng</a>
+        <a href="#contact">Liên hệ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Đổi giao diện sáng tối" title="Sáng / tối">☾</button>
+        <button class="menu-btn" id="menuToggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    <!-- =======================================================
+         4. HERO - PHẦN ĐẦU TRANG
+         Tên, lời giới thiệu và ảnh được lấy từ khu vực CONFIG.
+         ======================================================= -->
+    <section class="hero" id="home">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="wave-bg" aria-hidden="true">
+        <svg viewBox="0 0 1440 420" preserveAspectRatio="none">
+          <path class="wave-one" d="M0 190 C260 110 420 290 720 205 C1000 125 1190 160 1440 85 L1440 420 L0 420Z"/>
+          <path class="wave-two" d="M0 250 C240 160 450 330 720 255 C980 180 1190 245 1440 155 L1440 420 L0 420Z"/>
+          <path class="wave-three" d="M0 300 C270 220 480 370 760 295 C1040 220 1220 300 1440 230 L1440 420 L0 420Z"/>
+        </svg>
+      </div>
+
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="eyebrow" id="heroEyebrow">Hồ sơ cá nhân chính thức</div>
+          <h1>Xin chào,<br>tôi là <span class="name-highlight" id="heroName">Tên của bạn.</span></h1>
+          <p class="hero-lead" id="heroIntro">Nơi lưu giữ hành trình, những dấu mốc đáng nhớ và các thành tựu đã tạo nên con người tôi hôm nay.</p>
+          <div class="hero-buttons">
+            <a class="btn btn-primary" href="#achievements">Khám phá thành tựu <span aria-hidden="true">↗</span></a>
+            <a class="btn btn-ghost" href="#about">Tìm hiểu về tôi</a>
+          </div>
+        </div>
+
+        <div class="profile-wrap">
+          <div class="profile-frame">
+            <img id="profileImage" src="https://files.catbox.moe/23licc.jpeg" alt="Ảnh chân dung cá nhân">
+          </div>
+          <div class="profile-note">
+            <strong id="profileNoteTitle">Hành trình không ngừng</strong>
+            <small id="profileNoteText">Ghi dấu từng bước trưởng thành</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. GIỚI THIỆU -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <div><div class="section-kicker">01 / About</div><h2 id="aboutTitle">Đôi nét về tôi</h2></div>
+          <p class="section-desc" id="aboutSummary">Một hồ sơ được xây dựng để lưu giữ những điều có ý nghĩa, thể hiện hành trình và giá trị cá nhân.</p>
+        </div>
+        <div class="about-grid">
+          <div class="about-copy reveal" id="aboutCopy"></div>
+          <div class="fact-grid reveal" id="factGrid"></div>
+        </div>
+        <div class="stats reveal" id="statsGrid"></div>
+      </div>
+    </section>
+
+    <!-- 6. THÀNH TỰU -->
+    <section class="section soft-section" id="achievements">
+      <div class="container">
+        <div class="section-head reveal">
+          <div><div class="section-kicker">02 / Selected work</div><h2>Thành tựu nổi bật</h2></div>
+          <p class="section-desc">Những dấu mốc tiêu biểu được chọn lọc và lưu trữ cùng thông tin minh chứng.</p>
+        </div>
+        <div class="toolbar reveal">
+          <label class="search">
+            <input id="searchInput" type="search" placeholder="Tìm theo tên, năm hoặc nội dung..." aria-label="Tìm thành tựu">
+          </label>
+          <select class="filter" id="categoryFilter" aria-label="Lọc danh mục">
+            <option value="all">Tất cả danh mục</option>
+            <option value="Giải thưởng">Giải thưởng</option>
+            <option value="Chứng nhận">Chứng nhận</option>
+            <option value="Hoạt động">Hoạt động</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </div>
+        <div class="cards" id="achievementGrid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- 7. HÀNH TRÌNH -->
+    <section class="section" id="journey">
+      <div class="container">
+        <div class="section-head reveal">
+          <div><div class="section-kicker">03 / Timeline</div><h2>Hành trình phát triển</h2></div>
+          <p class="section-desc">Mỗi năm là một chương mới, mỗi trải nghiệm là một phần của hành trình.</p>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </section>
+
+    <!-- 8. THƯ VIỆN MINH CHỨNG -->
+    <section class="section soft-section" id="documents">
+      <div class="container">
+        <div class="section-head reveal">
+          <div><div class="section-kicker">04 / Evidence library</div><h2>Thư viện minh chứng</h2></div>
+          <p class="section-desc">Tài liệu được phân loại rõ ràng để thuận tiện tra cứu và tham khảo.</p>
+        </div>
+        <div class="doc-grid" id="documentGrid"></div>
+      </div>
+    </section>
+
+    <!-- 9. LIÊN HỆ -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-box reveal">
+          <div class="section-kicker">05 / Get in touch</div>
+          <h2>Các vấn đề hay công việc cần trao đổi thì liên hệ ZALO 039 767 0298</h2>
+          <p id="contactText">Cảm ơn bạn đã dành thời gian tìm hiểu hồ sơ của tôi. Nếu cần thêm thông tin hoặc muốn trao đổi, vui lòng liên hệ qua gmail bên dưới.</p>
+          <a class="btn btn-primary" id="emailLink" href="mailto:vinhaz123@gmail.com">Gửi email <span aria-hidden="true">↗</span></a>
+          <div class="social-links" id="socialLinks"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 10. CHÂN TRANG -->
+  <footer>
+    <div class="container footer-inner">
+      <span>© <span id="yearNow"></span> <span id="footerName">Personal Archive</span>. Bảo lưu mọi quyền.</span>
+      <span>Thành Vinh viết website này để lưu giữ kỹ niệm và giấy tờ khi cần </span>
+    </div>
+  </footer>
+
+  <!-- 11. HỘP XEM ẢNH PHÓNG TO -->
+  <div class="modal" id="imageModal" role="dialog" aria-modal="true" aria-label="Xem ảnh lớn" aria-hidden="true">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Đóng ảnh">×</button>
+    <img id="modalImage" src="" alt="Ảnh minh chứng phóng to">
+  </div>
+
+  <!-- =========================================================
+       12. JAVASCRIPT - DỮ LIỆU VÀ CHỨC NĂNG
+       KHU VỰC BẠN THƯỜNG XUYÊN CHỈNH SỬA NẰM NGAY BÊN DƯỚI.
+       ========================================================= -->
+  <script>
+    "use strict";
+
+    /* =========================================================
+       12.1. CẤU HÌNH WEBSITE - CHỈNH THÔNG TIN CÁ NHÂN Ở ĐÂY
+       - Không xóa dấu ngoặc kép quanh chữ.
+       - ẢNH: DÁN LINK TRỰC TIẾP (URL bắt đầu bằng https://), KHÔNG cần tạo thư mục.
+       - Ví dụ: "https://i.imgur.com/ten-anh.jpg"
+       - Nếu chưa có ảnh, để giá trị là chuỗi rỗng "".
+       ========================================================= */
+    const SITE_CONFIG = {
+      siteName: "Hồ Sơ Thành Tích", // Tên thương hiệu ở thanh menu.
+      fullName: "Phạm Huỳnh Thành Vinh", // Thay bằng họ tên thật muốn hiển thị.
+      eyebrow: "Bạn cần xem thêm thông tin của tôi phải không ?", // Dòng chữ nhỏ phía trên lời chào.
+      intro: "Nơi lưu giữ hành trình, những dấu mốc đáng nhớ và các thành tựu đã tạo nên con người tôi hôm nay.", // Lời giới thiệu đầu trang.
+      avatar: "https://files.catbox.moe/ey6m8s.webp", // Dán LINK ẢNH trực tiếp vào đây; ví dụ "https://.../avatar.jpg". Không dùng đường dẫn thư mục.
+      noteTitle: "Cố gắng không ngừng", // Tiêu đề thẻ nhỏ trên ảnh.
+      noteText: "đạt được thành công ", // Dòng mô tả dưới thẻ nhỏ.
+      aboutTitle: "Đôi nét về tôi", // Tiêu đề phần giới thiệu.
+      aboutSummary: "Một hồ sơ được xây dựng để lưu giữ những điều có ý nghĩa, thể hiện hành trình và giá trị cá nhân.", // Mô tả ngắn bên cạnh tiêu đề.
+      aboutParagraphs: [ // Mỗi phần tử là một đoạn văn trong phần giới thiệu.
+        "Tôi tin rằng mỗi thành tựu đều là kết quả của sự nỗ lực, học hỏi và những trải nghiệm đáng quý. Website này là nơi tôi hệ thống hóa hành trình của mình một cách rõ ràng, minh bạch và có thể tra cứu lâu dài.",
+        "Tại đây, bạn có thể tìm hiểu về tôi, xem các dấu mốc quan trọng và tham khảo những tài liệu minh chứng được chia sẻ công khai."
+      ],
+      email: "email@example.com", // Thay bằng email liên hệ; để "" nếu không muốn hiện nút email.
+      contactText: "Cảm ơn bạn đã dành thời gian tìm hiểu hồ sơ của tôi. Nếu cần thêm thông tin hoặc muốn trao đổi, vui lòng liên hệ qua kênh bên dưới."
+    };
+
+    /* =========================================================
+       12.2. CÁC Ô THÔNG TIN NGẮN
+       Đổi số và tên mô tả tùy nhu cầu. Có thể thêm/bớt phần tử.
+       ========================================================= */
+    const FACTS = [
+      { number: "01", label: "Hồ sơ cá nhân" }, // Ô thông tin số 1.
+      { number: "02", label: "Thành tựu & giải thưởng" }, // Ô thông tin số 2.
+      { number: "03", label: "Hành trình phát triển" }, // Ô thông tin số 3.
+      { number: "04", label: "Tài liệu minh chứng" } // Ô thông tin số 4.
+    ];
+
+    /* =========================================================
+       12.3. SỐ LIỆU TỔNG QUAN
+       Các con số có thể tự nhập; không tự tính để bạn chủ động.
+       ========================================================= */
+    const STATS = [
+      { value: "Có 2", label: "Thành tựu" }, // Tổng số thành tựu muốn công bố.
+      { value: "Có 3", label: "Chứng nhận" }, // Tổng số chứng nhận muốn công bố.
+      { value: "Có 8", label: "Năm hành trình" }, // Số năm hoạt động/hành trình.
+      { value: "∞", label: "Dấu mốc tiếp theo" } // Có thể thay bằng con số hoặc ký hiệu.
+    ];
+
+    /* =========================================================
+       12.4. DANH SÁCH THÀNH TỰU
+       Mỗi dấu { } là một thành tựu. Sao chép một khối để thêm mới.
+       image: LINK ẢNH trực tiếp (https://...), không phải đường dẫn thư mục.
+       document: link PDF trực tiếp hoặc "" nếu không có.
+       category chỉ nên dùng: Giải thưởng, Chứng nhận, Hoạt động, Khác.
+       ========================================================= */
+    const ACHIEVEMENTS = [
+      {
+        title: "Thi Chứng Chỉ Catia", // Tên thành tựu.
+        year: "2023", // Năm đạt được.
+        category: "Chứng nhận", // Danh mục dùng cho bộ lọc.
+        description: "Tôi học Chuyên nghành kỹ sư Ô Tô nên được chọn thi CATIA . Vì thi Catia khó hơn Word,Powpoint, Execl . Vì tôi là trùm ", // Mô tả ngắn.
+        image: "https://files.catbox.moe/5vy5z7.jpeg", // Dán LINK ẢNH trực tiếp; ví dụ "https://.../anh-thanh-tuu.jpg". Để "" nếu chưa có ảnh.
+        document: "" // File PDF; để "" nếu không có.
+      },
+      {
+        title: "Chứng chỉ sinh viên đại học Gemini ",
+        year: "2026",
+        category: "Chứng nhận",
+        description: "Trình độ gemini đặt lever max . Tôi còn có thể dùng Chat GPT áp dùng vào công việc ",
+        image: "https://files.catbox.moe/c92hvo.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+      {
+        title: "Đăng kí thi bằng lái xe",
+        year: "2024-2025",
+        category: "Chứng nhận",
+        description: "Tôi đã đạt được điểm tối đa khi học bằng lái A1 Và B số sàn ",
+        image: "https://files.catbox.moe/ncognp.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/rr4m6d.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/eppt9n.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/j0izit.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/7ob29o.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+      {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/42cokd.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+ {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/fraufl.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/m98olk.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/b6wd50.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      },
+    
+       {
+        title: "",
+        year: "",
+        category: "Chứng nhận",
+        description: " ",
+        image: "https://files.catbox.moe/stdl45.jpeg", // Dán LINK ẢNH trực tiếp (https://...).
+        document: ""
+      }   
+    ];
+
+    /* =========================================================
+       12.5. DÒNG THỜI GIAN
+       Thêm một phần tử để thêm một mốc hành trình.
+       ========================================================= */
+    const TIMELINE_ITEMS = [
+      { year: "2019", title: "Cột Mốc Đầu tiên", description: "Năm lớp 9 tôi được bạn Ngô Đình Nam. Bạn đã giúp tôi 1 bước đi vào nghành hỗ trợ mạng xã hội . Bằng việc tạo động lực cho tôi chỉ tôi viết web mặc dù tôi không hiểu gì hết nhưng tôi thấy bạn giỏi tôi cũng đã rất cố gắng nhưng giỏi việc khác, rất cảm ơn bạn Nam. Công lao của bạn cũng hết sức cao cả đó . Tôi đã hỗ trợ được rất nhiều người bán hàng xây dựng kênh facebook,fanpage,hội nhóm bán hàng." },
+      { year: "2020-2022", title: "Tuổi trẻ phải có đam mê", description: "Tôi hỗ trợ chạy ads facebook,lúc này tôi mới 17 tuổi tôi đã quản lí được CTV làm việc cho tôi . Thời còn trẻ tôi cũng hỗ trợ lấy lại facebook cho mọi người và giúp xóa đi các bài đăng, kênh facebook đăng sai sự thật ." },
+      { year: "2022", title: "Học giỏi,ngoan ngoãn,Kiếm tiền và đậu Đại Học ", description: "Giữa nhiều ngôi trường khác nhau tôi đã chọn Học tại Trường Đại Học Lạc Hồng ( Biên Hòa - Đồng Nai). 2022 Tôi bắt đầu học năm nhất với nhiều bỡ ngỡ trong suy nghĩ . Ban ngày đi học còn ban đêm về vẫn hỗ trợ mxh . Vừa có tiền vừa là một nơi uy tín để người ta nhờ qua lại. Từ đó tôi trang trải những sinh hoạt cá nhân một cách tự lập . Tự lập là điều tốt ,tôi đã có rất nhiều thứ mà tôi ao ước và tôi đều mua được rồi.2022 vậy thôi giờ đọc tiếp năm 2023-2024 nhé" },
+       { year: "2022-2024", title: "Tôi đã có người yêu Bùi Ngọc Tố Quyên và đã có nhiều thành tựu trong những năm tới ", description: ". Đó là động lực để tôi kiếm tiền thật nhiều . Tôi từng mua những phần mềm quản lí hàng loạt facebook , nhưng đã mất trắng 4tr vì lí do nên tảng fb siết chặt,thường xuyên khóa tài khoản của tôi, và rồi tôi mặc kệ đó là kinh nghiệm và cũng là 1 quá khứ đáng nhớ " },
+        { year: "2024", title: "Tôi đang Học Năm 2 Đại Học gần sang Năm 3", description: "Tôi được nhiều người trong trường biết đến . Đặc biệt lớp học ai cũng biết tôi hỗ trợ mxh cả và cũng không ảnh hưởng gì hết, fb các bạn có lỗi gì thì mình giúp chứ không có tính toán , và tôi rất vui khi quen được những người bạn đại học của tôi và những người bạn hồi trẻ cũng vậy ." },
+         { year: "2024-2025", title: " Và tôi viết trang web này để kể về quá khứ & thành tích của tôi nên là mọi người đọc cho vui nhé", description: " 2024 tôi học lái xe máy . tôi nộp tiền và 1 tháng sau là thi đậu . Cũng là chuyện bằng lái xe ,sau khi tôi đậu A1 tôi đăng ký luôn B2 . Lúc đóng tiền vẫn chưa bị gì hết bỗng nhiên bị dính vào đợt hết phối giấy phép lái xe rồi là Công An sẽ quản lí các trường thi nên tôi học bằng B2 mất 14 tháng mới được cầm bằng . Quá đen"  },
+          { year: "2026", title: "T6 vừa rồi tôi đã Tốt Nghiệp 4 năm tôi đã học và tôi vẫn hỗ trợ mxh  ", description: "Giờ thì tôi đang viết web và ở nhà đợi đi khám lính .Tôi đã viết giấy tình nguyện rồi . Có Đạt Loại 1 thì qua tết tôi đi rồi tôi về . Tôi vẫn sẽ hỗ trợ mxh nếu vẫn còn chỗ để tôi làm thì tôi vẫn sẽ làm . tôi còn tấm bằng kỹ sư ô tô và kỹ năng máy tính,bán hàng mà không sợ không có gì làm hehee  " },
+    ];
+
+    /* =========================================================
+       12.6. TÀI LIỆU MINH CHỨNG
+       file có thể là PDF, JPG, PNG hoặc loại tệp trình duyệt hỗ trợ.
+       ========================================================= */
+    const DOCUMENTS = [
+      { title: "Hồ sơ thành tựu", type: "PDF", detail: "Tài liệu tổng hợp", file: "assets/documents/achievement-01.pdf" },
+      { title: "Chứng nhận tiêu biểu", type: "PDF", detail: "Bằng chứng và chứng nhận", file: "assets/documents/achievement-02.pdf" },
+      { title: "Hình ảnh hoạt động", type: "IMG", detail: "Tư liệu hình ảnh", file: "assets/achievements/achievement-03.jpg" }
+    ];
+
+    /* =========================================================
+       12.7. LIÊN KẾT MẠNG XÃ HỘI
+       Xóa phần tử nếu không dùng. Dán URL đầy đủ, có https://.
+       ========================================================= */
+    const SOCIAL_LINKS = [
+      { label: "ZALO", url: "https://zalo.me/0397670298" },
+  { label: "Tiktok", url: "https://www.tiktok.com/@vinhquangcaotiktok" }   
+     // { label: "LinkedIn", url: "https://linkedin.com/in/ten-cua-ban" }
+    ];
+
+    /* =========================================================
+       13. HÀM TIỆN ÍCH
+       Tạo phần tử bằng textContent để nội dung người dùng nhập
+       không bị hiểu nhầm thành mã HTML.
+       ========================================================= */
+    const $ = (selector) => document.querySelector(selector); // Hàm chọn một phần tử theo CSS selector.
+
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag); // Tạo thẻ HTML mới.
+      if (className) element.className = className; // Gán class nếu được truyền vào.
+      if (text !== undefined && text !== null) element.textContent = text; // Gán chữ an toàn.
+      return element; // Trả phần tử về nơi gọi hàm.
+    }
+
+    function addReveal(element) {
+      element.classList.add("reveal"); // Gắn hiệu ứng xuất hiện khi cuộn.
+      if (!("IntersectionObserver" in window)) element.classList.add("visible"); // Trình duyệt cũ vẫn hiện nội dung.
+      else revealObserver.observe(element); // Theo dõi phần tử bằng IntersectionObserver.
+    }
+
+    /* =========================================================
+       14. HIỂN THỊ CẤU HÌNH CÁ NHÂN LÊN WEBSITE
+       ========================================================= */
+    function renderSiteConfig() {
+      $("#brandName").textContent = SITE_CONFIG.siteName; // Đổi tên trên thanh menu.
+      $("#heroEyebrow").textContent = SITE_CONFIG.eyebrow; // Đổi dòng giới thiệu nhỏ.
+      $("#heroName").textContent = SITE_CONFIG.fullName + "."; // Đổi tên lớn đầu trang.
+      $("#heroIntro").textContent = SITE_CONFIG.intro; // Đổi đoạn giới thiệu đầu trang.
+      $("#profileNoteTitle").textContent = SITE_CONFIG.noteTitle; // Đổi tiêu đề trên ảnh.
+      $("#profileNoteText").textContent = SITE_CONFIG.noteText; // Đổi mô tả trên ảnh.
+      $("#aboutTitle").textContent = SITE_CONFIG.aboutTitle; // Đổi tiêu đề phần giới thiệu.
+      $("#aboutSummary").textContent = SITE_CONFIG.aboutSummary; // Đổi mô tả phần giới thiệu.
+      $("#contactText").textContent = SITE_CONFIG.contactText; // Đổi lời nhắn liên hệ.
+      $("#footerName").textContent = SITE_CONFIG.siteName; // Đổi tên ở chân trang.
+
+      const profileImage = $("#profileImage"); // Lấy thẻ ảnh đại diện.
+      if (SITE_CONFIG.avatar.trim()) { // Chỉ đặt ảnh nếu có đường dẫn.
+        profileImage.src = SITE_CONFIG.avatar; // Đặt đường dẫn ảnh đại diện.
+        profileImage.onerror = () => { // Chạy khi không tìm thấy ảnh.
+          const fallback = makeElement("div", "avatar-fallback", "Ảnh chân dung của bạn"); // Tạo khung ảnh thay thế.
+          profileImage.replaceWith(fallback); // Thay ảnh lỗi bằng khung đẹp.
+        };
+      } else { // Nếu avatar là chuỗi rỗng.
+        const fallback = makeElement("div", "avatar-fallback", "Thêm ảnh tại assets/avatar.jpg"); // Tạo lời nhắc thêm ảnh.
+        profileImage.replaceWith(fallback); // Hiển thị khung thay thế.
+      }
+
+      const emailLink = $("#emailLink"); // Lấy nút email.
+      if (SITE_CONFIG.email.trim()) { // Nếu đã nhập email.
+        emailLink.href = "mailto:" + SITE_CONFIG.email.trim(); // Tạo liên kết gửi email.
+        emailLink.hidden = false; // Hiện nút email.
+      } else { // Nếu chưa có email.
+        emailLink.hidden = true; // Ẩn nút email.
+      }
+    }
+
+    /* =========================================================
+       15. HIỂN THỊ PHẦN GIỚI THIỆU VÀ CÁC Ô THÔNG TIN
+       ========================================================= */
+    function renderAbout() {
+      const aboutCopy = $("#aboutCopy"); // Lấy vùng nội dung giới thiệu.
+      SITE_CONFIG.aboutParagraphs.forEach((paragraph) => { // Lặp qua từng đoạn giới thiệu.
+        const p = makeElement("p", "", paragraph); // Tạo đoạn văn và đưa nội dung vào dạng text.
+        aboutCopy.appendChild(p); // Thêm đoạn văn vào website.
+      });
+
+      const factGrid = $("#factGrid"); // Lấy lưới thông tin.
+      FACTS.forEach((fact) => { // Lặp qua từng ô thông tin.
+        const card = makeElement("div", "fact"); // Tạo thẻ thông tin.
+        card.appendChild(makeElement("b", "", fact.number)); // Thêm số thứ tự.
+        card.appendChild(makeElement("span", "", fact.label)); // Thêm nhãn mô tả.
+        factGrid.appendChild(card); // Đưa thẻ vào lưới.
+      });
+
+      const statsGrid = $("#statsGrid"); // Lấy lưới thống kê.
+      STATS.forEach((stat) => { // Lặp qua từng số liệu.
+        const card = makeElement("div", "stat"); // Tạo thẻ thống kê.
+        card.appendChild(makeElement("strong", "", stat.value)); // Thêm con số.
+        card.appendChild(makeElement("span", "", stat.label)); // Thêm mô tả.
+        statsGrid.appendChild(card); // Đưa thẻ vào lưới.
+      });
+    }
+
+    /* =========================================================
+       16. HIỂN THỊ THÀNH TỰU + TÌM KIẾM + LỌC DANH MỤC
+       ========================================================= */
+    const achievementGrid = $("#achievementGrid"); // Lấy vùng chứa thẻ thành tựu.
+
+    function renderAchievements() {
+      const query = $("#searchInput").value.trim().toLocaleLowerCase("vi"); // Lấy từ khóa tìm kiếm.
+      const category = $("#categoryFilter").value; // Lấy danh mục đang chọn.
+      const filtered = ACHIEVEMENTS.filter((item) => { // Lọc danh sách thành tựu.
+        const searchable = [item.title, item.year, item.category, item.description].join(" ").toLocaleLowerCase("vi"); // Gom nội dung để tìm.
+        const matchesText = searchable.includes(query); // Kiểm tra từ khóa có xuất hiện không.
+        const matchesCategory = category === "all" || item.category === category; // Kiểm tra danh mục.
+        return matchesText && matchesCategory; // Chỉ giữ mục thỏa cả hai điều kiện.
+      });
+
+      achievementGrid.replaceChildren(); // Xóa kết quả cũ trước khi vẽ kết quả mới.
+
+      if (!filtered.length) { // Nếu không có kết quả.
+        achievementGrid.appendChild(makeElement("div", "empty", "Không tìm thấy thành tựu phù hợp.")); // Hiện thông báo.
+        return; // Dừng hàm tại đây.
+      }
+
+      filtered.forEach((item) => { // Lặp qua từng thành tựu phù hợp.
+        const card = makeElement("article", "card"); // Tạo thẻ thành tựu.
+        const imageBox = makeElement("div", "card-image"); // Tạo vùng ảnh.
+        imageBox.tabIndex = 0; // Cho phép dùng bàn phím để mở ảnh.
+        imageBox.setAttribute("role", "button"); // Báo cho trình đọc màn hình đây là nút.
+        imageBox.setAttribute("aria-label", "Xem ảnh " + item.title); // Đặt tên truy cập cho nút ảnh.
+
+        if (item.image) { // Nếu thành tựu có đường dẫn ảnh.
+          const image = document.createElement("img"); // Tạo thẻ ảnh.
+          image.src = item.image; // Đặt đường dẫn ảnh.
+          image.alt = item.title; // Đặt mô tả ảnh.
+          image.loading = "lazy"; // Chỉ tải ảnh khi gần xuất hiện trên màn hình.
+          image.onerror = () => { // Nếu ảnh không tồn tại.
+            imageBox.replaceChildren(makeElement("div", "image-placeholder", "Chưa tìm thấy ảnh: " + item.image)); // Hiện thông báo thay ảnh lỗi.
+          };
+          imageBox.appendChild(image); // Đưa ảnh vào vùng ảnh.
+        } else { // Nếu chưa khai báo ảnh.
+          imageBox.appendChild(makeElement("div", "image-placeholder", "Chưa thêm hình ảnh")); // Hiện vùng ảnh trống đẹp.
+        }
+
+        const body = makeElement("div", "card-body"); // Tạo phần nội dung thẻ.
+        const meta = makeElement("div", "card-meta"); // Tạo dòng danh mục và năm.
+        meta.appendChild(makeElement("span", "", item.category)); // Thêm danh mục.
+        meta.appendChild(makeElement("span", "", item.year)); // Thêm năm.
+        body.appendChild(meta); // Thêm dòng meta vào thẻ.
+        body.appendChild(makeElement("h3", "", item.title)); // Thêm tên thành tựu.
+        body.appendChild(makeElement("p", "", item.description)); // Thêm mô tả.
+
+        if (item.document) { // Nếu có file minh chứng.
+          const link = makeElement("a", "card-link", "Xem tài liệu ↗"); // Tạo liên kết tài liệu.
+          link.href = item.document; // Đặt đường dẫn PDF hoặc file.
+          link.target = "_blank"; // Mở tài liệu ở tab mới.
+          link.rel = "noopener noreferrer"; // Tăng an toàn khi mở tab mới.
+          body.appendChild(link); // Thêm liên kết vào thẻ.
+        }
+
+        card.append(imageBox, body); // Ghép ảnh và nội dung thành thẻ.
+        achievementGrid.appendChild(card); // Đưa thẻ vào lưới.
+      });
+    }
+
+    $("#searchInput").addEventListener("input", renderAchievements); // Tìm kiếm ngay khi người dùng gõ.
+    $("#categoryFilter").addEventListener("change", renderAchievements); // Lọc lại khi đổi danh mục.
+
+    /* =========================================================
+       17. HIỂN THỊ TIMELINE VÀ THƯ VIỆN TÀI LIỆU
+       ========================================================= */
+    function renderTimeline() {
+      const timeline = $("#timeline"); // Lấy vùng timeline.
+      TIMELINE_ITEMS.forEach((item) => { // Lặp từng mốc thời gian.
+        const row = makeElement("div", "timeline-item"); // Tạo một dòng timeline.
+        const year = makeElement("div", "timeline-year", item.year); // Tạo phần năm.
+        const content = makeElement("div", "timeline-content"); // Tạo phần nội dung.
+        content.appendChild(makeElement("h3", "", item.title)); // Thêm tiêu đề mốc.
+        content.appendChild(makeElement("p", "", item.description)); // Thêm mô tả mốc.
+        row.append(year, content); // Ghép năm và nội dung.
+        addReveal(row); // Gắn hiệu ứng xuất hiện khi cuộn.
+        timeline.appendChild(row); // Đưa mốc vào timeline.
+      });
+    }
+
+    function renderDocuments() {
+      const grid = $("#documentGrid"); // Lấy vùng thư viện tài liệu.
+      DOCUMENTS.forEach((doc) => { // Lặp từng tài liệu.
+        const link = makeElement("a", "doc"); // Tạo thẻ liên kết tài liệu.
+        link.href = doc.file; // Đặt đường dẫn tệp.
+        link.target = "_blank"; // Mở tài liệu ở tab mới.
+        link.rel = "noopener noreferrer"; // Tăng an toàn khi mở tab mới.
+        const icon = makeElement("span", "doc-icon", doc.type); // Tạo biểu tượng loại tài liệu.
+        const info = makeElement("span"); // Tạo vùng thông tin.
+        info.appendChild(makeElement("strong", "", doc.title)); // Thêm tên tài liệu.
+        info.appendChild(makeElement("small", "", doc.detail)); // Thêm mô tả tài liệu.
+        link.append(icon, info); // Ghép biểu tượng và thông tin.
+        addReveal(link); // Gắn hiệu ứng cuộn.
+        grid.appendChild(link); // Đưa tài liệu vào lưới.
+      });
+    }
+
+    /* =========================================================
+       18. HIỂN THỊ LIÊN KẾT MẠNG XÃ HỘI
+       ========================================================= */
+    function renderSocialLinks() {
+      const socialContainer = $("#socialLinks"); // Lấy vùng chứa mạng xã hội.
+      SOCIAL_LINKS.forEach((social) => { // Lặp qua các liên kết đã khai báo.
+        if (!social.url) return; // Bỏ qua mục không có URL.
+        const link = makeElement("a", "", social.label); // Tạo liên kết có nhãn.
+        link.href = social.url; // Đặt địa chỉ mạng xã hội.
+        link.target = "_blank"; // Mở ở tab mới.
+        link.rel = "noopener noreferrer"; // Tăng an toàn.
+        socialContainer.appendChild(link); // Đưa liên kết vào trang.
+      });
+    }
+
+    /* =========================================================
+       19. CHẾ ĐỘ SÁNG / TỐI
+       Lựa chọn được lưu trong trình duyệt của khách truy cập.
+       ========================================================= */
+    const themeToggle = $("#themeToggle"); // Lấy nút đổi giao diện.
+    const THEME_STORAGE_KEY = "personalArchiveTheme"; // Tên khóa lưu giao diện.
+    let savedTheme = ""; // Khởi tạo biến lưu giao diện.
+
+    try { savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || ""; } // Đọc lựa chọn cũ.
+    catch (error) { savedTheme = ""; } // Nếu trình duyệt chặn lưu trữ, dùng giao diện sáng.
+
+    if (savedTheme === "dark") document.body.classList.add("dark"); // Bật tối nếu người dùng đã chọn tối.
+
+    function updateThemeButton() {
+      const isDark = document.body.classList.contains("dark"); // Kiểm tra giao diện hiện tại.
+      themeToggle.textContent = isDark ? "☀" : "☾"; // Đổi biểu tượng mặt trời/mặt trăng.
+      themeToggle.setAttribute("aria-label", isDark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"); // Cập nhật nhãn hỗ trợ.
+      document.querySelector('meta[name="theme-color"]').content = isDark ? "#071a2c" : "#eef7ff"; // Đổi màu thanh trình duyệt trên thiết bị hỗ trợ.
+    }
+
+    updateThemeButton(); // Đồng bộ biểu tượng lúc mở trang.
+
+    themeToggle.addEventListener("click", () => { // Chạy khi người dùng bấm nút giao diện.
+      document.body.classList.toggle("dark"); // Đảo trạng thái sáng/tối.
+      const newTheme = document.body.classList.contains("dark") ? "dark" : "light"; // Xác định lựa chọn mới.
+      try { localStorage.setItem(THEME_STORAGE_KEY, newTheme); } // Lưu lựa chọn vào trình duyệt.
+      catch (error) { /* Không làm hỏng trang nếu trình duyệt không cho lưu. */ }
+      updateThemeButton(); // Cập nhật biểu tượng và màu trình duyệt.
+    });
+
+    /* =========================================================
+       20. MENU ĐIỆN THOẠI
+       ========================================================= */
+    const menuToggle = $("#menuToggle"); // Lấy nút menu điện thoại.
+    const navLinks = $("#navLinks"); // Lấy danh sách liên kết menu.
+
+    function closeMobileMenu() {
+      navLinks.classList.remove("open"); // Ẩn menu.
+      menuToggle.setAttribute("aria-expanded", "false"); // Cập nhật trạng thái trợ năng.
+    }
+
+    menuToggle.addEventListener("click", () => { // Khi bấm nút menu.
+      const isOpen = navLinks.classList.toggle("open"); // Đảo trạng thái menu.
+      menuToggle.setAttribute("aria-expanded", String(isOpen)); // Ghi nhận menu đang mở hay đóng.
+    });
+
+    navLinks.querySelectorAll("a").forEach((link) => { // Lấy tất cả liên kết trong menu.
+      link.addEventListener("click", closeMobileMenu); // Đóng menu sau khi chọn mục.
+    });
+
+    document.addEventListener("click", (event) => { // Theo dõi cú nhấp chuột toàn trang.
+      if (!navLinks.contains(event.target) && !menuToggle.contains(event.target)) closeMobileMenu(); // Bấm ngoài menu thì đóng.
+    });
+
+    /* =========================================================
+       21. XEM ẢNH PHÓNG TO
+       ========================================================= */
+    const imageModal = $("#imageModal"); // Lấy lớp phủ xem ảnh.
+    const modalImage = $("#modalImage"); // Lấy ảnh trong lớp phủ.
+    const modalClose = $("#modalClose"); // Lấy nút đóng ảnh.
+    let lastFocusedElement = null; // Lưu vị trí focus trước khi mở ảnh.
+
+    function openImage(source, description) {
+      if (!source) return; // Không mở nếu không có ảnh.
+      lastFocusedElement = document.activeElement; // Ghi nhớ phần tử đang được chọn.
+      modalImage.src = source; // Đặt ảnh cần phóng to.
+      modalImage.alt = description || "Ảnh minh chứng"; // Đặt mô tả ảnh.
+      imageModal.classList.add("open"); // Hiện lớp phủ.
+      imageModal.setAttribute("aria-hidden", "false"); // Báo lớp phủ đang hiện.
+      modalClose.focus(); // Chuyển focus vào nút đóng.
+      document.body.style.overflow = "hidden"; // Ngăn cuộn trang phía sau.
+    }
+
+    function closeImage() {
+      imageModal.classList.remove("open"); // Ẩn lớp phủ.
+      imageModal.setAttribute("aria-hidden", "true"); // Báo lớp phủ đã ẩn.
+      modalImage.removeAttribute("src"); // Bỏ ảnh khỏi modal khi đóng.
+      document.body.style.overflow = ""; // Cho phép cuộn trang trở lại.
+      if (lastFocusedElement) lastFocusedElement.focus(); // Trả focus về phần tử trước đó.
+    }
+
+    achievementGrid.addEventListener("click", (event) => { // Bắt thao tác bấm trong lưới thành tựu.
+      const imageBox = event.target.closest(".card-image"); // Tìm vùng ảnh gần nhất.
+      if (!imageBox) return; // Nếu không bấm vào vùng ảnh thì bỏ qua.
+      const image = imageBox.querySelector("img"); // Tìm ảnh bên trong vùng ảnh.
+      if (image && image.src) openImage(image.src, image.alt); // Mở ảnh lớn nếu ảnh tồn tại.
+    });
+
+    achievementGrid.addEventListener("keydown", (event) => { // Hỗ trợ mở ảnh bằng bàn phím.
+      if ((event.key === "Enter" || event.key === " ") && event.target.classList.contains("card-image")) { // Kiểm tra Enter hoặc Space.
+        event.preventDefault(); // Ngăn cuộn trang khi nhấn Space.
+        const image = event.target.querySelector("img"); // Lấy ảnh trong vùng được chọn.
+        if (image && image.src) openImage(image.src, image.alt); // Mở ảnh.
+      }
+    });
+
+    modalClose.addEventListener("click", closeImage); // Đóng ảnh khi bấm nút X.
+    imageModal.addEventListener("click", (event) => { if (event.target === imageModal) closeImage(); }); // Bấm vùng tối bên ngoài ảnh để đóng.
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && imageModal.classList.contains("open")) closeImage(); }); // Nhấn Escape để đóng.
+
+    /* =========================================================
+       22. HIỆU ỨNG HIỆN DẦN KHI CUỘN
+       ========================================================= */
+    let revealObserver = null; // Biến chứa bộ theo dõi cuộn.
+
+    if ("IntersectionObserver" in window) { // Kiểm tra trình duyệt có hỗ trợ không.
+      revealObserver = new IntersectionObserver((entries, observer) => { // Tạo bộ theo dõi các phần tử.
+        entries.forEach((entry) => { // Duyệt từng phần tử đang được theo dõi.
+          if (entry.isIntersecting) { // Nếu phần tử đi vào màn hình.
+            entry.target.classList.add("visible"); // Hiện phần tử.
+            observer.unobserve(entry.target); // Ngừng theo dõi sau khi đã hiện.
+          }
+        });
+      }, { threshold: 0.12 }); // Hiện khi khoảng 12% phần tử đi vào màn hình.
+    }
+
+    document.querySelectorAll(".reveal").forEach((element) => addReveal(element)); // Gắn hiệu ứng cho phần tĩnh có sẵn.
+
+    /* =========================================================
+       23. KHỞI TẠO WEBSITE
+       Các hàm này chạy một lần khi trang được tải.
+       ========================================================= */
+    renderSiteConfig(); // Hiển thị tên, ảnh, giới thiệu và email.
+    renderAbout(); // Hiển thị đoạn giới thiệu, ô thông tin và thống kê.
+    renderAchievements(); // Hiển thị danh sách thành tựu.
+    renderTimeline(); // Hiển thị dòng thời gian.
+    renderDocuments(); // Hiển thị thư viện tài liệu.
+    renderSocialLinks(); // Hiển thị liên kết mạng xã hội.
+    $("#yearNow").textContent = new Date().getFullYear(); // Tự cập nhật năm ở chân trang.
+  </script>
 </body>
 </html>
