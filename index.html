@@ -385,7 +385,55 @@
       }
       .reveal { opacity: 1; transform: none; }
     }
-  </style>
+
+/* ===== KHÓA THƯ VIỆN THÀNH TỰU ===== */
+.achievement-lock {
+  max-width: 460px;
+  margin: 35px auto;
+  padding: 30px 22px;
+  text-align: center;
+  border: 1px solid rgba(80, 140, 255, 0.3);
+  border-radius: 18px;
+  background: rgba(80, 140, 255, 0.08);
+}
+
+.achievement-lock .lock-icon {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.achievement-lock input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  margin: 18px 0 12px;
+  border: 1px solid #8aaaff;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.achievement-lock button,
+#achievementContent button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 10px;
+  background: #247cff;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.achievement-error {
+  color: #e53935;
+  margin-top: 12px;
+}
+
+#achievementLock[hidden],
+#achievementContent[hidden] {
+  display: none !important;
+}
+</style>
 </head>
 
 <body>
@@ -472,28 +520,76 @@
       </div>
     </section>
 
-    <!-- 6. THÀNH TỰU -->
-    <section class="section soft-section" id="achievements">
-      <div class="container">
-        <div class="section-head reveal">
-          <div><div class="section-kicker">02 / Selected work</div><h2>Thành tựu nổi bật</h2></div>
-          <p class="section-desc">Những dấu mốc tiêu biểu được chọn lọc và lưu trữ cùng thông tin minh chứng.</p>
-        </div>
-        <div class="toolbar reveal">
-          <label class="search">
-            <input id="searchInput" type="search" placeholder="Tìm theo tên, năm hoặc nội dung..." aria-label="Tìm thành tựu">
-          </label>
-          <select class="filter" id="categoryFilter" aria-label="Lọc danh mục">
-            <option value="all">Tất cả danh mục</option>
-            <option value="Giải thưởng">Giải thưởng</option>
-            <option value="Chứng nhận">Chứng nhận</option>
-            <option value="Hoạt động">Hoạt động</option>
-            <option value="Khác">Khác</option>
-          </select>
-        </div>
-        <div class="cards" id="achievementGrid" aria-live="polite"></div>
+    
+    
+<!-- 06. THÀNH TỰU NỔI BẬT - CÓ KHÓA MẬT KHẨU -->
+<section class="section soft-section" id="achievements">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <div>
+        <div class="section-kicker">02 / Selected work</div>
+        <h2>Thành tựu nổi bật</h2>
       </div>
-    </section>
+      <p class="section-desc">
+        Những dấu mốc tiêu biểu được chọn lọc và lưu trữ cùng thông tin minh chứng.
+      </p>
+    </div>
+
+    <!-- MÀN HÌNH NHẬP MẬT KHẨU -->
+    <div class="achievement-lock" id="achievementLock">
+      <div class="lock-icon">🔒</div>
+      <h3>Thư viện thành tựu riêng tư</h3>
+      <p>Vui lòng nhập mật khẩu để xem các thành tựu nổi bật.</p>
+
+      <input
+        type="password"
+        id="achievementPassword"
+        placeholder="Nhập mật khẩu..."
+        autocomplete="off"
+      >
+
+      <button type="button" onclick="unlockAchievements()">
+        Mở khóa thư viện
+      </button>
+
+      <p id="achievementError" class="achievement-error"></p>
+    </div>
+
+    <!-- NỘI DUNG THÀNH TỰU -->
+    <div id="achievementContent" hidden>
+
+      <div style="text-align:right; margin-bottom:18px;">
+        <button type="button" onclick="lockAchievements()">
+          🔒 Khóa lại
+        </button>
+      </div>
+
+      <div class="toolbar reveal">
+        <label class="search">
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Tìm theo tên, năm hoặc nội dung..."
+            aria-label="Tìm thành tựu"
+          >
+        </label>
+
+        <select class="filter" id="categoryFilter" aria-label="Lọc danh mục">
+          <option value="all">Tất cả danh mục</option>
+          <option value="Giải thưởng">Giải thưởng</option>
+          <option value="Chứng nhận">Chứng nhận</option>
+          <option value="Hoạt động">Hoạt động</option>
+          <option value="Khác">Khác</option>
+        </select>
+      </div>
+
+      <div class="cards" id="achievementGrid" aria-live="polite"></div>
+
+    </div>
+  </div>
+</section>
+
 
     <!-- 7. HÀNH TRÌNH -->
     <section class="section" id="journey">
@@ -506,16 +602,26 @@
       </div>
     </section>
 
-    <!-- 8. THƯ VIỆN MINH CHỨNG -->
-    <section class="section soft-section" id="documents">
-      <div class="container">
-        <div class="section-head reveal">
-          <div><div class="section-kicker">04 / Evidence library</div><h2>Thư viện minh chứng</h2></div>
-          <p class="section-desc">Tài liệu được phân loại rõ ràng để thuận tiện tra cứu và tham khảo.</p>
-        </div>
-        <div class="doc-grid" id="documentGrid"></div>
+    
+
+<!-- 8. THƯ VIỆN MINH CHỨNG -->
+<section class="section soft-section" id="documents">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-kicker">04 / Evidence library</div>
+        <h2>Thư viện minh chứng</h2>
       </div>
-    </section>
+      <p class="section-desc">
+        Tài liệu được phân loại rõ ràng để thuận tiện tra cứu và tham khảo.
+      </p>
+    </div>
+
+    <div class="doc-grid" id="documentGrid"></div>
+  </div>
+</section>
+
+
 
     <!-- 9. LIÊN HỆ -->
     <section class="section" id="contact">
@@ -1112,5 +1218,48 @@ startMusic();
 });
   </script>
 
+ <script>
+/* ===== MẬT KHẨU THÀNH TỰU NỔI BẬT ===== */
+
+// ĐỔI MẬT KHẨU TẠI ĐÂY
+const ACHIEVEMENTS_PASSWORD = "phamhuynhthanhvinh";
+
+// Mở khóa thư viện
+function unlockAchievements() {
+  const password = document.getElementById("achievementPassword").value;
+  const error = document.getElementById("achievementError");
+
+  if (password === ACHIEVEMENTS_PASSWORD) {
+    document.getElementById("achievementLock").hidden = true;
+    document.getElementById("achievementContent").hidden = false;
+    error.textContent = "";
+
+    document.getElementById("achievementPassword").value = "";
+  } else {
+    error.textContent = "Mật khẩu không chính xác. Vui lòng thử lại!";
+  }
+}
+
+// Khóa lại thư viện
+function lockAchievements() {
+  document.getElementById("achievementContent").hidden = true;
+  document.getElementById("achievementLock").hidden = false;
+  document.getElementById("achievementPassword").value = "";
+  document.getElementById("achievementError").textContent = "";
+}
+
+// Nhấn Enter để mở khóa
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("achievementPassword");
+
+  if (input) {
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        unlockAchievements();
+      }
+    });
+  }
+});
+ </script>
 </body>
 </html>
