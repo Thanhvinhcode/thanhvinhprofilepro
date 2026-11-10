@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#121212">
+  <title>Góc âm nhạc | Music Space</title>
+  <meta name="description" content="Không gian âm nhạc cá nhân.">
+
+  <style>
+    /* =====================================================
+       1. BẢNG MÀU VÀ CÀI ĐẶT CHUNG
+       Muốn đổi màu chủ đạo, sửa --accent.
+    ===================================================== */
+    :root {
+      --page: #121212;
+      --surface: #181818;
+      --surface-hover: #282828;
+      --text: #ffffff;
+      --muted: #a7a7a7;
+      --accent: #1ed760;
+      --line: #303030;
+      --player-height: 112px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: calc(var(--player-height) + 28px);
+      background:
+        radial-gradient(ellipse at 50% -15%, rgba(29, 120, 82, .22), transparent 42%),
+        var(--page);
+      color: var(--text);
+      font-family: "Times New Roman", Georgia, serif;
+    }
+
+    button, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    /* =====================================================
+       2. THANH ĐẦU TRANG VÀ NÚT QUAY LẠI HỒ SƠ
+    ===================================================== */
+    .topbar {
+      width: min(1240px, 94%);
+      margin: 0 auto;
+      padding: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+
+    .brand span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid #454545;
+      border-radius: 999px;
+      padding: 9px 16px;
+      transition: .2s ease;
+      white-space: nowrap;
+    }
+
+    .back-link:hover {
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    /* =====================================================
+       3. PHẦN GIỚI THIỆU ĐẦU TRANG
+       Sửa tiêu đề và lời giới thiệu trong HTML bên dưới.
+    ===================================================== */
+    .hero {
+      width: min(1240px, 94%);
+      margin: 18px auto 30px;
+      padding: clamp(28px, 6vw, 66px);
+      border-radius: 14px;
+      background:
+        linear-gradient(110deg, rgba(20, 90, 61, .9), rgba(24, 24, 24, .82)),
+        #184d36;
+      min-height: 235px;
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+    }
+
+    .eyebrow {
+      color: #d8fbe5;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(38px, 7vw, 68px);
+      line-height: 1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #e1eee6;
+      font-size: clamp(16px, 2vw, 19px);
+    }
+
+    /* =====================================================
+       4. KHU VỰC DANH SÁCH ALBUM / BÀI HÁT
+    ===================================================== */
+    .container {
+      width: min(1240px, 94%);
+      margin: 0 auto 35px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 28px 0 18px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(23px, 3vw, 30px);
+    }
+
+    .section-heading p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .song-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 18px;
+    }
+
+    .song-card {
+      position: relative;
+      min-width: 0;
+      padding: 14px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: background .22s ease, transform .22s ease;
+    }
+
+    .song-card:hover,
+    .song-card:focus-visible {
+      background: var(--surface-hover);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .song-card.active {
+      background: #292929;
+      box-shadow: inset 0 0 0 1px rgba(30, 215, 96, .7);
+    }
+
+    .cover-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      margin-bottom: 14px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #24533d, #293b32);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .28);
+      overflow: hidden;
+    }
+
+    .song-cover {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cover-fallback {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.75);
+      font-size: 42px;
+    }
+
+    .card-play {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #071b0e;
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateY(8px);
+      box-shadow: 0 8px 18px rgba(0,0,0,.35);
+      transition: .2s ease;
+      pointer-events: none;
+    }
+
+    .song-card:hover .card-play,
+    .song-card:focus-visible .card-play,
+    .song-card.active .card-play {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .song-title {
+      display: block;
+      font-size: 18px;
+      line-height: 1.3;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .song-artist {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 30px;
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* =====================================================
+       5. THANH PHÁT NHẠC CỐ ĐỊNH Ở CUỐI TRANG
+    ===================================================== */
+    .player {
+      position: fixed;
+      z-index: 50;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      min-height: var(--player-height);
+      padding: 12px max(3%, calc((100% - 1240px) / 2));
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(240px, 1.4fr) minmax(130px, 1fr);
+      align-items: center;
+      gap: 22px;
+      background: #181818;
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -8px 28px rgba(0,0,0,.24);
+    }
+
+    .now-playing {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .player-cover {
+      width: 58px;
+      height: 58px;
+      flex: 0 0 58px;
+      border-radius: 5px;
+      object-fit: cover;
+      background: #284333;
+    }
+
+    .now-text { min-width: 0; }
+
+    .player-title {
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .player-artist {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .player-center {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+    }
+
+    .control-btn {
+      border: 0;
+      padding: 5px;
+      background: transparent;
+      color: #b3b3b3;
+      cursor: pointer;
+      font-size: 21px;
+      line-height: 1;
+      transition: color .18s ease, transform .18s ease;
+    }
+
+    .control-btn:hover { color: #fff; }
+    .control-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .control-btn.main {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #111;
+      font-size: 17px;
+    }
+
+    .control-btn.main:hover {
+      background: var(--accent);
+      transform: scale(1.06);
+    }
+
+    .progress-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 35px minmax(0, 1fr) 35px;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font: 12px Arial, sans-serif;
+    }
+
+    input[type="range"] {
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .progress { width: 100%; }
+
+    .volume-area {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .volume { width: 100px; }
+
+    .status {
+      width: min(1240px, 94%);
+      margin: 0 auto 18px;
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* =====================================================
+       6. GIAO DIỆN ĐIỆN THOẠI / MÀN HÌNH NHỎ
+    ===================================================== */
+    @media (max-width: 760px) {
+      :root { --player-height: 154px; }
+
+      .song-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+      }
+
+      .song-card { padding: 10px; }
+      .song-title { font-size: 16px; }
+      .song-artist { font-size: 13px; }
+
+      .player {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px 12px;
+        padding: 10px 4%;
+      }
+
+      .now-playing { grid-column: 1; grid-row: 1; }
+      .player-center { grid-column: 1 / -1; grid-row: 2; }
+      .volume-area { grid-column: 2; grid-row: 1; }
+      .player-cover { width: 45px; height: 45px; flex-basis: 45px; }
+      .controls { gap: 18px; }
+      .control-btn.main { width: 36px; height: 36px; }
+      .volume { width: 65px; }
+    }
+
+    @media (max-width: 380px) {
+      .song-grid { gap: 8px; }
+      .song-card { padding: 8px; }
+      .volume-area .volume-label { display: none; }
+      .hero { min-height: 190px; }
+    }
+
+    /* Tôn trọng cài đặt giảm chuyển động của thiết bị */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================================
+       7. THANH ĐẦU TRANG
+       Nếu file hồ sơ chính không tên index.html,
+       hãy sửa href bên dưới thành tên file chính xác.
+  ====================================================== -->
+  <header class="topbar">
+    <div class="brand">♫ <span>MUSIC</span> SPACE</div>
+    <a class="back-link" href="index.html">← Quay lại hồ sơ</a>
+  </header>
+
+  <!-- =====================================================
+       8. TIÊU ĐỀ TRANG NHẠC
+       Bạn có thể tự đổi tiêu đề và lời giới thiệu.
+  ====================================================== -->
+  <section class="hero">
+    <div class="eyebrow">MY PERSONAL MUSIC COLLECTION</div>
+    <h1>Góc âm nhạc</h1>
+    <p>Nơi lưu giữ những giai điệu và cảm xúc.</p>
+  </section>
+
+  <!-- =====================================================
+       9. KHU VỰC DANH SÁCH BÀI HÁT
+       JavaScript tự tạo các thẻ bài hát ở đây.
+  ====================================================== -->
+  <main class="container">
+    <div class="section-heading">
+      <div>
+        <h2>Danh sách bài hát</h2>
+        <p>Chọn một bài hát để bắt đầu thưởng thức.</p>
+      </div>
+    </div>
+
+    <div class="song-grid" id="songGrid"></div>
+  </main>
+
+  <div class="status" id="status" aria-live="polite">
+    Chưa chọn bài hát.
+  </div>
+
+  <!-- =====================================================
+       10. THANH PHÁT NHẠC
+       Thanh này chỉ xuất hiện trong music.html.
+  ====================================================== -->
+  <section class="player" aria-label="Trình phát nhạc">
+    <div class="now-playing">
+      <img class="player-cover" id="playerCover" src="" alt="Ảnh bìa bài hát">
+      <div class="now-text">
+        <div class="player-title" id="playerTitle">Chưa chọn bài hát</div>
+        <div class="player-artist" id="playerArtist">Chọn bài hát trong danh sách</div>
+      </div>
+    </div>
+
+    <div class="player-center">
+      <div class="controls">
+        <button class="control-btn" id="prevBtn" type="button" aria-label="Bài trước">⏮</button>
+        <button class="control-btn main" id="playBtn" type="button" aria-label="Phát nhạc">▶</button>
+        <button class="control-btn" id="nextBtn" type="button" aria-label="Bài tiếp theo">⏭</button>
+      </div>
+
+      <div class="progress-row">
+        <span id="currentTime">0:00</span>
+        <input class="progress" id="progress" type="range" min="0" max="100" step="0.1" value="0" aria-label="Tiến trình bài hát">
+        <span id="duration">0:00</span>
+      </div>
+    </div>
+
+    <div class="volume-area">
+      <span aria-hidden="true">🔊</span>
+      <span class="volume-label">Âm lượng</span>
+      <input class="volume" id="volume" type="range" min="0" max="1" step="0.05" value="0.4" aria-label="Âm lượng">
+    </div>
+  </section>
+
+  <!-- Chỉ tạo một audio player duy nhất cho toàn trang -->
+  <audio id="audioPlayer" preload="none"></audio>
+
+  <script>
+    /* =====================================================
+       11. DANH SÁCH BÀI HÁT - BẠN CHỈ SỬA Ở ĐÂY
+
+       Mỗi bài gồm 4 trường:
+       title  = Tên bài hát
+       artist = Ca sĩ / người thể hiện
+       cover  = LINK ẢNH BÌA TRỰC TIẾP
+       audio  = LINK MP3 TRỰC TIẾP
+
+       Không cần tạo thư mục ảnh hoặc nhạc.
+       Thay link mẫu bằng link thật của bạn.
+
+       Khi thêm bài mới, sao chép một khối bài hát,
+       đặt dấu phẩy giữa các khối.
+    ====================================================== */
+
+    const SONGS = [
+      {
+        title: "Tên bài hát thứ nhất",
+        artist: "Tên ca sĩ",
+        cover: "https://example.com/anh-bia-1.jpg",
+        audio: "https://example.com/bai-hat-1.mp3"
+      },
+      {
+        title: "Tên bài hát thứ hai",
+        artist: "Tên ca sĩ",
+        cover: "https://example.com/anh-bia-2.jpg",
+        audio: "https://example.com/bai-hat-2.mp3"
+      },
+      {
+        title: "Tên bài hát thứ ba",
+        artist: "Tên ca sĩ",
+        cover: "https://example.com/anh-bia-3.jpg",
+        audio: "https://example.com/bai-hat-3.mp3"
+      }
+
+      // THÊM BÀI MỚI Ở ĐÂY.
+      // Nhớ thêm dấu phẩy sau khối bài phía trên nếu thêm tiếp.
+    ];
+
+    /* =====================================================
+       12. KẾT NỐI CÁC THÀNH PHẦN HTML
+    ====================================================== */
+    const audio = document.getElementById("audioPlayer");
+    const songGrid = document.getElementById("songGrid");
+    const playerCover = document.getElementById("playerCover");
+    const playerTitle = document.getElementById("playerTitle");
+    const playerArtist = document.getElementById("playerArtist");
+    const playBtn = document.getElementById("playBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const progress = document.getElementById("progress");
+    const currentTime = document.getElementById("currentTime");
+    const duration = document.getElementById("duration");
+    const volume = document.getElementById("volume");
+    const status = document.getElementById("status");
+
+    let currentIndex = -1;
+
+    /* =====================================================
+       13. HIỂN THỊ ẢNH BÌA
+       Nếu URL ảnh bị lỗi, hiện biểu tượng thay thế.
+    ====================================================== */
+    function createCover(url, alt, className) {
+      const wrap = document.createElement("div");
+      wrap.className = className === "song-cover" ? "cover-wrap" : "";
+
+      const img = document.createElement("img");
+      img.className = className;
+      img.src = url;
+      img.alt = alt;
+      img.loading = "lazy";
+
+      img.addEventListener("error", () => {
+        if (wrap.className === "cover-wrap") {
+          const fallback = document.createElement("div");
+          fallback.className = "cover-fallback";
+          fallback.textContent = "♫";
+          wrap.replaceChildren(fallback);
+        } else {
+          img.removeAttribute("src");
+          img.alt = "Chưa có ảnh bìa";
+        }
+      }, { once: true });
+
+      if (wrap.className) {
+        wrap.appendChild(img);
+        return wrap;
+      }
+
+      return img;
+    }
+
+    /* =====================================================
+       14. TẠO DANH SÁCH BÀI HÁT TỪ SONGS
+    ====================================================== */
+    function renderSongs() {
+      songGrid.replaceChildren();
+
+      if (!SONGS.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "Bạn chưa thêm bài hát nào. Hãy bổ sung trong phần SONGS của JavaScript.";
+        songGrid.appendChild(empty);
+        return;
+      }
+
+      SONGS.forEach((song, index) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "song-card";
+        card.setAttribute("aria-label", "Phát " + song.title);
+
+        const cover = createCover(song.cover, "Ảnh bìa " + song.title, "song-cover");
+
+        const playBadge = document.createElement("span");
+        playBadge.className = "card-play";
+        playBadge.textContent = "▶";
+        playBadge.setAttribute("aria-hidden", "true");
+
+        const title = document.createElement("span");
+        title.className = "song-title";
+        title.textContent = song.title;
+
+        const artist = document.createElement("span");
+        artist.className = "song-artist";
+        artist.textContent = song.artist;
+
+        const coverWrap = document.createElement("div");
+        coverWrap.className = "cover-wrap";
+        coverWrap.append(cover, playBadge);
+
+        card.append(coverWrap, title, artist);
+        card.addEventListener("click", () => selectSong(index, true));
+        songGrid.appendChild(card);
+      });
+
+      updateActiveCard();
+    }
+
+    /* =====================================================
+       15. CẬP NHẬT BÀI ĐANG CHỌN
+    ====================================================== */
+    function updateActiveCard() {
+      document.querySelectorAll(".song-card").forEach((card, index) => {
+        const isActive = index === currentIndex;
+        card.classList.toggle("active", isActive);
+
+        const badge = card.querySelector(".card-play");
+        if (badge) {
+          badge.textContent = isActive && !audio.paused ? "Ⅱ" : "▶";
+        }
+      });
+    }
+
+    /* =====================================================
+       16. CHỌN BÀI HÁT
+    ====================================================== */
+    async function selectSong(index, shouldPlay) {
+      const song = SONGS[index];
+      if (!song || !song.audio) {
+        status.textContent = "Bài hát chưa có link MP3 hợp lệ.";
+        return;
+      }
+
+      currentIndex = index;
+      audio.pause();
+      audio.src = song.audio;
+      audio.load();
+
+      playerCover.src = song.cover || "";
+      playerTitle.textContent = song.title || "Không có tên bài hát";
+      playerArtist.textContent = song.artist || "Chưa cập nhật ca sĩ";
+
+      progress.value = 0;
+      currentTime.textContent = "0:00";
+      duration.textContent = "0:00";
+      playBtn.textContent = "▶";
+
+      updateActiveCard();
+      status.textContent = "Đã chọn: " + song.title;
+
+      if (shouldPlay) await playMusic();
+    }
+
+    /* =====================================================
+       17. PHÁT / TẠM DỪNG NHẠC
+    ====================================================== */
+    async function playMusic() {
+      if (currentIndex === -1) {
+        if (!SONGS.length) {
+          status.textContent = "Bạn chưa thêm bài hát nào.";
+          return;
+        }
+        await selectSong(0, false);
+      }
+
+      try {
+        await audio.play();
+        playBtn.textContent = "Ⅱ";
+        status.textContent = "Đang phát: " + SONGS[currentIndex].title;
+      } catch (error) {
+        playBtn.textContent = "▶";
+        status.textContent = "Không phát được. Hãy kiểm tra link MP3 hoặc quyền truy cập của link.";
+      }
+
+      updateActiveCard();
+    }
+
+    function pauseMusic() {
+      audio.pause();
+      playBtn.textContent = "▶";
+      status.textContent = "Đã tạm dừng.";
+      updateActiveCard();
+    }
+
+    playBtn.addEventListener("click", () => {
+      if (audio.paused) playMusic();
+      else pauseMusic();
+    });
+
+    /* =====================================================
+       18. CHUYỂN BÀI TRƯỚC / BÀI TIẾP THEO
+    ====================================================== */
+    function nextSong() {
+      if (!SONGS.length) return;
+      const nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % SONGS.length;
+      selectSong(nextIndex, true);
+    }
+
+    function previousSong() {
+      if (!SONGS.length) return;
+      const previousIndex = currentIndex < 0
+        ? 0
+        : (currentIndex - 1 + SONGS.length) % SONGS.length;
+      selectSong(previousIndex, true);
+    }
+
+    nextBtn.addEventListener("click", nextSong);
+    prevBtn.addEventListener("click", previousSong);
+
+    // Hết bài hiện tại thì tự chuyển sang bài kế tiếp.
+    audio.addEventListener("ended", nextSong);
+
+    /* =====================================================
+       19. THỜI GIAN VÀ THANH TIẾN TRÌNH
+    ====================================================== */
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds)) return "0:00";
+      const minutes = Math.floor(seconds / 60);
+      const remaining = Math.floor(seconds % 60);
+      return minutes + ":" + String(remaining).padStart(2, "0");
+    }
+
+    audio.addEventListener("loadedmetadata", () => {
+      duration.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+      progress.value = (audio.currentTime / audio.duration) * 100;
+      currentTime.textContent = formatTime(audio.currentTime);
+    });
+
+    progress.addEventListener("input", () => {
+      if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+      audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+    });
+
+    /* =====================================================
+       20. ÂM LƯỢNG
+       Mặc định 40%. Người nghe có thể tự chỉnh.
+    ====================================================== */
+    audio.volume = Number(volume.value);
+
+    volume.addEventListener("input", () => {
+      audio.volume = Number(volume.value);
+    });
+
+    /* =====================================================
+       21. KHỞI TẠO
+       Không tự phát nhạc khi vừa mở trang.
+       Người nghe chủ động chọn bài hoặc nhấn Play.
+    ====================================================== */
+    renderSongs();
+  </script>
+</body>
+</html>
