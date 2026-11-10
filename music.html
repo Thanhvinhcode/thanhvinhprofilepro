@@ -435,6 +435,70 @@
         animation-duration: .01ms !important;
       }
     }
+
+
+/* ===== THANH TÌM KIẾM BÀI HÁT ===== */
+.music-search {
+  width: 100%;
+  max-width: 620px;
+  margin: 25px 0 12px;
+  padding: 0 16px;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #202020;
+  border: 1px solid #383838;
+  border-radius: 14px;
+  transition: .25s ease;
+}
+
+.music-search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 215, 96, .12);
+}
+
+.music-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font-size: 16px;
+  padding: 14px 0;
+}
+
+.music-search input::placeholder {
+  color: #999;
+}
+
+.music-search button {
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  font-size: 19px;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.music-search button:hover {
+  color: white;
+}
+
+.song-search-count {
+  color: #999;
+  font-size: 13px;
+  margin: 8px 0 20px;
+}
+
+@media (max-width: 600px) {
+  .music-search {
+    max-width: 100%;
+    margin-top: 18px;
+  }
+}
+
   </style>
 </head>
 
@@ -455,7 +519,7 @@
        Bạn có thể tự đổi tiêu đề và lời giới thiệu.
   ====================================================== -->
   <section class="hero">
-    <div class="eyebrow">MY PERSONAL MUSIC COLLECTION</div>
+    <div class="eyebrow">Âm nhạc là một mạch máu của tôi không thể thiếu </div>
     <h1>Góc âm nhạc</h1>
     <p>Nơi lưu giữ những giai điệu và cảm xúc.</p>
   </section>
@@ -472,8 +536,29 @@
       </div>
     </div>
 
-    <div class="song-grid" id="songGrid"></div>
-  </main>
+<!-- Ô tìm kiếm bài hát -->
+<div class="music-search">
+  <span>🔎</span>
+  <input
+    type="search"
+    id="songSearch"
+    placeholder="Tìm tên bài hát hoặc ca sĩ..."
+    autocomplete="off"
+  >
+  <button
+    type="button"
+    id="clearSongSearch"
+    aria-label="Xóa nội dung tìm kiếm"
+  >✕</button>
+</div>
+
+<!-- Danh sách bài hát -->
+<div class="song-grid" id="songGrid"></div>
+
+<p id="songSearchCount" class="song-search-count"></p>
+
+
+</main>
 
   <div class="status" id="status" aria-live="polite">
     Chưa chọn bài hát.
@@ -534,6 +619,12 @@
     ====================================================== */
 
     const SONGS = [
+      {
+        title: "LIST NHẠC 1 Giờ  ",
+        artist: "20 Nhạc Hot TikTok",
+        cover: "https://files.catbox.moe/nvgyx8.jpg",
+        audio: "https://files.catbox.moe/4tcp59.mp3"
+      },
        {
         title: "Dạy Cho Anh Cách Quên Em Đi",
         artist: "Khánh Đơn",
@@ -725,14 +816,6 @@
         cover: "https://files.catbox.moe/9plitm.jpg",
         audio: "https://files.catbox.moe/poirow.mp3"
       },
-
-
-
-
-
-
-
-
  {
         title: "Cảm Ơn Vì Tất Cả Remix",
         artist: "Anh Quân Idol",
@@ -769,14 +852,126 @@
         cover: "https://files.catbox.moe/zoloco.jpg",
         audio: "https://files.catbox.moe/zo61ed.mp3"
       },
-
-
-
-
-
-
-
-
+      {
+        title: "Tình Yêu Màu Nắng",
+        artist: "Hychun x Đông Remix",
+        cover: "https://files.catbox.moe/lad38t.jpg",
+        audio: "https://files.catbox.moe/noqrkt.mp3"
+      },
+      {
+        title: "Rằng Em Mãi Ở Bên",
+        artist: "Hychun x Đông Remix",
+        cover: "https://files.catbox.moe/j89wk3.jpg",
+        audio: "https://files.catbox.moe/t4uuqf.mp3"
+      },
+      {
+        title: "Thương Nhau Đến Thế Remix",
+        artist: "Gia Huy",
+        cover: "https://files.catbox.moe/2akjer.jpg",
+        audio: "https://files.catbox.moe/2xb5fl.mp3"
+      },
+      {
+        title: "Vết Thương",
+        artist: "Hoàng Khang x AM Remix",
+        cover: "https://files.catbox.moe/fonf1p.jpg",
+        audio: "https://files.catbox.moe/z78x38.mp3"
+      },
+      {
+        title: "Sự Ưu Tiên Của Em Remix ",
+        artist: "Kiều Chi x Truzg",
+        cover: "https://files.catbox.moe/30tkfa.jpg",
+        audio: "https://files.catbox.moe/be49i5.mp3"
+      },
+ {
+        title: "Đêm Trắng",
+        artist: "Haiyang Remix",
+        cover: "https://files.catbox.moe/lcwzkc.jpg",
+        audio: "https://files.catbox.moe/2abmfd.mp3"
+      },
+       {
+        title: "Sự Thật Đã Bỏ Quên",
+        artist: " Hằng BingBoong",
+        cover: "https://files.catbox.moe/evu2je.jpg",
+        audio: "https://files.catbox.moe/ds7fk7.mp3"
+      },
+       {
+        title: "Hẹn Hò Nhưng Không Yêu",
+        artist: "Wendy Thảo x Ness",
+        cover: "https://files.catbox.moe/hca0rt.jpg",
+        audio: "https://files.catbox.moe/fzb7pk.mp3"
+      },
+       {
+        title: "Làm Người Yêu Em Nhé Baby",
+        artist: "Wendy Thảo",
+        cover: "https://files.catbox.moe/6fvw60.jpg",
+        audio: "https://files.catbox.moe/tzx3ga.mp3"
+      },
+       {
+        title: "Họa Phận Ái Lưu Remix",
+        artist: "Viral TikTok",
+        cover: "https://files.catbox.moe/4yl6ps.jpg",
+        audio: "https://files.catbox.moe/axpzd8.mp3"
+      },
+       {
+        title: "Ngược Lối Yêu Remix",
+        artist: "Vicky Nhung",
+        cover: "https://files.catbox.moe/xxyozt.jpg",
+        audio: "https://files.catbox.moe/scg1f1.mp3"
+      },
+       {
+        title: "Không Môn Đăng Hộ Đối",
+        artist: " Nguyễn Vĩ",
+        cover: "https://files.catbox.moe/wecguc.jpg",
+        audio: "https://files.catbox.moe/4wsjha.mp3"
+      },
+  {
+        title: "THỦY CHUNG REMIX",
+        artist: "THƯƠNG VÕ",
+        cover: "https://files.catbox.moe/dv0uuv.jpg",
+        audio: "https://files.catbox.moe/2evv62.mp3"
+      },
+        {
+        title: "EM NÀO CÓ TỘI",
+        artist: "QKHANH REMIX",
+        cover: "https://files.catbox.moe/rw939i.jpg",
+        audio: "https://files.catbox.moe/pglqx5.mp3"
+      },
+        {
+        title: "Hoá Tương Tư Remix",
+        artist: "Anh Rồng",
+        cover: "https://files.catbox.moe/5aikmm.jpg",
+        audio: "https://files.catbox.moe/7c2akp.mp3"
+      },
+        {
+        title: "Anh Vui",
+        artist: "Phạm Kỳ",
+        cover: "https://files.catbox.moe/waw6ui.jpg",
+        audio: "https://files.catbox.moe/7i9kr6.mp3"
+      }, 
+        {
+        title: "Ngày Mình Chia Tay",
+        artist: " Csgm x Phan Duy Anh",
+        cover: "https://files.catbox.moe/wqgwkw.jpg",
+        audio: "https://files.catbox.moe/a59y0o.mp3"
+      },
+        {
+        title: "Mùa Thu Và Lời Xin Lỗi",
+        artist: "Thành Đạt x OXI",
+        cover: "https://files.catbox.moe/13cnme.jpg",
+        audio: "https://files.catbox.moe/1kp6ea.mp3"
+      },
+        {
+        title: "Nghèo Thì Ai Thương Remix",
+        artist: "Thành Đạt x OXI",
+        cover: "https://files.catbox.moe/b7r6jd.jpg",
+        audio: "https://files.catbox.moe/buv29y.mp3"
+      },
+        {
+        title: "Em Say Rồi ",
+        artist: "Thương Võ",
+        cover: "https://files.catbox.moe/rsea8a.jpg",
+        audio: "https://files.catbox.moe/h6w523.mp3"
+      },
       {
         title: "Thế giới ảo tình yêu thật",
         artist: "Trịnh Đình Quang",
@@ -793,6 +988,10 @@
     ====================================================== */
     const audio = document.getElementById("audioPlayer");
     const songGrid = document.getElementById("songGrid");
+    // Kết nối chức năng tìm kiếm
+const songSearch = document.getElementById("songSearch");
+const clearSongSearch = document.getElementById("clearSongSearch");
+const songSearchCount = document.getElementById("songSearchCount");
     const playerCover = document.getElementById("playerCover");
     const playerTitle = document.getElementById("playerTitle");
     const playerArtist = document.getElementById("playerArtist");
@@ -844,49 +1043,108 @@
     /* =====================================================
        14. TẠO DANH SÁCH BÀI HÁT TỪ SONGS
     ====================================================== */
-    function renderSongs() {
-      songGrid.replaceChildren();
+   
+/* ===== HIỂN THỊ VÀ TÌM KIẾM BÀI HÁT ===== */
 
-      if (!SONGS.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-        empty.textContent = "Bạn chưa thêm bài hát nào. Hãy bổ sung trong phần SONGS của JavaScript.";
-        songGrid.appendChild(empty);
-        return;
-      }
+// Chuyển chữ về dạng dễ tìm kiếm, bỏ dấu tiếng Việt
+function normalizeSongText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .trim();
+}
 
-      SONGS.forEach((song, index) => {
-        const card = document.createElement("button");
-        card.type = "button";
-        card.className = "song-card";
-        card.setAttribute("aria-label", "Phát " + song.title);
+function renderSongs() {
+  songGrid.replaceChildren();
 
-        const cover = createCover(song.cover, "Ảnh bìa " + song.title, "song-cover");
+  // Lấy từ khóa tìm kiếm
+  const keyword = normalizeSongText(songSearch.value);
 
-        const playBadge = document.createElement("span");
-        playBadge.className = "card-play";
-        playBadge.textContent = "▶";
-        playBadge.setAttribute("aria-hidden", "true");
+  // Lọc bài hát theo tên bài hoặc tên ca sĩ
+  const filteredSongs = SONGS
+    .map((song, originalIndex) => ({
+      song,
+      originalIndex
+    }))
+    .filter(item => {
+      const title = normalizeSongText(item.song.title);
+      const artist = normalizeSongText(item.song.artist);
 
-        const title = document.createElement("span");
-        title.className = "song-title";
-        title.textContent = song.title;
+      return title.includes(keyword) || artist.includes(keyword);
+    });
 
-        const artist = document.createElement("span");
-        artist.className = "song-artist";
-        artist.textContent = song.artist;
+  // Hiển thị số lượng kết quả
+  songSearchCount.textContent = keyword
+    ? `Tìm thấy ${filteredSongs.length} / ${SONGS.length} bài hát`
+    : `Tổng cộng ${SONGS.length} bài hát`;
 
-        const coverWrap = document.createElement("div");
-        coverWrap.className = "cover-wrap";
-        coverWrap.append(cover, playBadge);
+  // Không có kết quả
+  if (filteredSongs.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = keyword
+      ? "Không tìm thấy bài hát phù hợp. Hãy thử từ khóa khác nhé!"
+      : "Bạn chưa thêm bài hát nào.";
 
-        card.append(coverWrap, title, artist);
-        card.addEventListener("click", () => selectSong(index, true));
-        songGrid.appendChild(card);
-      });
+    songGrid.appendChild(empty);
+    return;
+  }
 
-      updateActiveCard();
-    }
+  // Tạo thẻ bài hát
+  filteredSongs.forEach(({ song, originalIndex }) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "song-card";
+    card.setAttribute("aria-label", "Phát " + song.title);
+
+    const cover = createCover(
+      song.cover,
+      "Ảnh bìa " + song.title,
+      "song-cover"
+    );
+
+    const playBadge = document.createElement("span");
+    playBadge.className = "card-play";
+    playBadge.textContent = "▶";
+    playBadge.setAttribute("aria-hidden", "true");
+
+    const title = document.createElement("span");
+    title.className = "song-title";
+    title.textContent = song.title;
+
+    const artist = document.createElement("span");
+    artist.className = "song-artist";
+    artist.textContent = song.artist;
+
+    const coverWrap = document.createElement("div");
+    coverWrap.className = "cover-wrap";
+    coverWrap.append(cover, playBadge);
+
+    card.append(coverWrap, title, artist);
+
+    // Dùng vị trí gốc trong SONGS để phát đúng bài
+    card.addEventListener("click", () => {
+      selectSong(originalIndex, true);
+    });
+
+    songGrid.appendChild(card);
+  });
+
+  updateActiveCard();
+}
+
+// Tìm kiếm ngay khi người dùng nhập
+songSearch.addEventListener("input", renderSongs);
+
+// Xóa từ khóa tìm kiếm
+clearSongSearch.addEventListener("click", () => {
+  songSearch.value = "";
+  renderSongs();
+  songSearch.focus();
+});
+
 
     /* =====================================================
        15. CẬP NHẬT BÀI ĐANG CHỌN
