@@ -2008,16 +2008,6 @@ adminModal.addEventListener("click", (event) => {
     adminModal.style.display = "none";
   }
 });
-
-
-
-
-
-
-
-
-
-
 // Xử lý đăng nhập bằng Supabase
 adminLoginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -2088,12 +2078,9 @@ const adminSongList = document.getElementById("adminSongList");
 const saveSongBtn = document.getElementById("saveSongBtn");
 
 // Xử lý thêm bài hát mới
-
-// THÊM MỚI HOẶC CHỈNH SỬA BÀI HÁT
 songAdminForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-
-  const editId = document.getElementById("editSongId").value;
+const editId = document.getElementById("editSongId").value;
   const title = document.getElementById("newSongTitle").value.trim();
   const artist = document.getElementById("newSongArtist").value.trim();
   const audioUrl = document.getElementById("newSongAudio").value.trim();
@@ -2102,62 +2089,33 @@ songAdminForm.addEventListener("submit", async (event) => {
   saveSongBtn.disabled = true;
   saveSongBtn.textContent = "ĐANG LƯU...";
 
-  let result;
 
-  if (editId) {
-    // Cập nhật bài hát
-    result = await supabaseClient
-      .from("songs")
-      .update({
-        title: title,
-        artist: artist,
-        audio_url: audioUrl,
-        cover_url: coverUrl
-      })
-      .eq("id", editId);
-  } else {
-    // Thêm bài hát mới
-    result = await supabaseClient
-      .from("songs")
-      .insert([{
-        title: title,
-        artist: artist,
-        audio_url: audioUrl,
-        cover_url: coverUrl
-      }]);
-  }
+let result;
 
-  saveSongBtn.disabled = false;
+if (editId) {
+  // Cập nhật bài hát đang chọn
+  result = await supabaseClient
+    .from("songs")
+    .update({
+      title: title,
+      artist: artist,
+      audio_url: audioUrl,
+      cover_url: coverUrl
+    })
+    .eq("id", editId);
+} else {
+  // Giữ nguyên chức năng thêm bài hát cũ
+  result = await supabaseClient
+    .from("songs")
+    .insert([{
+      title: title,
+      artist: artist,
+      audio_url: audioUrl,
+      cover_url: coverUrl
+    }]);
+}
 
-  if (result.error) {
-    songAdminMessage.textContent = "Lỗi: " + result.error.message;
-    songAdminMessage.style.color = "#ff5555";
-    saveSongBtn.textContent = editId
-      ? "LƯU THAY ĐỔI"
-      : "+ THÊM BÀI HÁT";
-    return;
-  }
-
-  songAdminMessage.textContent = editId
-    ? "Đã cập nhật bài hát thành công!"
-    : "Đã thêm bài hát thành công!";
-
-  songAdminMessage.style.color = "#1ed760";
-
-  songAdminForm.reset();
-  document.getElementById("editSongId").value = "";
-  document.getElementById("cancelEditBtn").style.display = "none";
-  saveSongBtn.textContent = "+ THÊM BÀI HÁT";
-
-  await loadSongsFromSupabase();
-});
-document.getElementById("cancelEditBtn").addEventListener("click", () => {
-  songAdminForm.reset();
-  document.getElementById("editSongId").value = "";
-  document.getElementById("cancelEditBtn").style.display = "none";
-  saveSongBtn.textContent = "+ THÊM BÀI HÁT";
-  songAdminMessage.textContent = "";
-});
+const { error } = result;
 
 
 
@@ -2169,7 +2127,7 @@ document.getElementById("cancelEditBtn").addEventListener("click", () => {
 
 
 
-
+    
 
   saveSongBtn.disabled = false;
   saveSongBtn.textContent = "+ THÊM BÀI HÁT";
@@ -2181,11 +2139,14 @@ document.getElementById("cancelEditBtn").addEventListener("click", () => {
     return;
   }
 
-  songAdminMessage.textContent = "Đã thêm bài hát thành công!";
-  songAdminMessage.style.color = "#1ed760";
+songAdminMessage.textContent = editId
+  ? "Đã cập nhật bài hát thành công!"
+  : "Đã thêm bài hát thành công!";
+    songAdminMessage.style.color = "#1ed760";
 
   songAdminForm.reset();
-
+document.getElementById("editSongId").value = "";
+document.getElementById("cancelEditBtn").style.display = "none";
   // Tải lại danh sách nhạc
   await loadSongsFromSupabase();
 });
