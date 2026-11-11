@@ -32,7 +32,7 @@
       min-height: 100vh;
       padding-bottom: calc(var(--player-height) + 28px);
       background:
-        radial-gradient(ellipse at 50% -15%, rgba(29, 120, 82, .22), transparent 42%),
+        radial-gradient(ellipse at 50% -15%, rgba(12, 212, 247, 0.534), transparent 80%),
         var(--page);
       color: var(--text);
       font-family: "Times New Roman", Georgia, serif;
@@ -82,19 +82,29 @@
        3. PHẦN GIỚI THIỆU ĐẦU TRANG
        Sửa tiêu đề và lời giới thiệu trong HTML bên dưới.
     ===================================================== */
-    .hero {
-      width: min(1240px, 94%);
-      margin: 18px auto 30px;
-      padding: clamp(28px, 6vw, 66px);
-      border-radius: 14px;
-      background:
-        linear-gradient(110deg, rgba(20, 90, 61, .9), rgba(24, 24, 24, .82)),
-        #184d36;
-      min-height: 235px;
-      display: flex;
-      flex-direction: column;
-      justify-content: end;
-    }
+ 
+.hero {
+  width: min(1240px, 94%);
+  margin: 18px auto 30px;
+  padding: clamp(28px, 6vw, 66px);
+  border-radius: 24px;
+
+  /* HÌNH NỀN XANH LÁ CHO KHUNG GÓC ÂM NHẠC */
+  background:
+    linear-gradient(
+      110deg,
+      rgba(0, 30, 18, 0.30),
+      rgba(0, 20, 12, 0.15)
+    ),
+    url("https://files.catbox.moe/bc8jo2.jpg") center center / cover no-repeat;
+
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  overflow: hidden;
+}
+
 
     .eyebrow {
       color: #d8fbe5;
@@ -628,7 +638,7 @@
        {
         title: "Dạy Cho Anh Cách Quên Em Đi",
         artist: "Khánh Đơn",
-        cover: "https://byvn.net/t7sf",
+        cover: "https://files.catbox.moe/dyp0uu.jpg",
         audio: "https://files.catbox.moe/t9cj55.mp3"
       },
         {
@@ -640,19 +650,19 @@
     {
         title: " Xóa hết yêu thương Remix",
         artist: "Vương Bảo Nam",
-        cover: "https://byvn.net/eBom",
+        cover: "https://files.catbox.moe/wcynfd.jpg",
         audio: "https://files.catbox.moe/12hwsd.mp3"
       },
        {
         title: "Thu Cuối Remix",
         artist: "Mr.T ft Yanbi x Hằng Bingboong",
-        cover: "https://byvn.net/M3PM",
+        cover: "https://files.catbox.moe/4jyen0.jpg",
         audio: "https://files.catbox.moe/y7fzdl.mp3"
       },
      {
         title: "Tìm Em Remix ",
         artist: "Hngle ft Bảo Anh x Kai Remix",
-        cover: "https://byvn.net/KYzE",
+        cover: "https://files.catbox.moe/yjcd03.jpg",
         audio: "https://files.catbox.moe/u964xc.mp3"
       },
          {
@@ -670,31 +680,31 @@
 {
         title: "Vở Kịch Của Em Remix",
         artist: "Hồ Phong An",
-        cover: "https://byvn.net/RPuk",
+        cover: "https://files.catbox.moe/stdldi.jpg",
         audio: "https://files.catbox.moe/7w71nc.mp3"
       },
       {
         title: "Nên Chờ Hay Nên Quên Remix",
         artist: "Phan Duy Anh",
-        cover: "https://byvn.net/H2TY",
+        cover: "https://files.catbox.moe/aldq8a.jpg",
         audio: "https://files.catbox.moe/e4p2uo.mp3"
       },
       {
         title: "Anh Đau Từ Lúc Em Đi",
         artist: "Trần Mạnh Cường",
-        cover: "https://byvn.net/zNZB",
+        cover: "https://files.catbox.moe/j9m9nv.jpg",
         audio: "https://files.catbox.moe/li8ujv.mp3"
       },
       {
         title: "Đổi Tình Đổi Áo",
         artist: "Khánh Cường",
-        cover: "https://byvn.net/ugke",
+        cover: "https://files.catbox.moe/tptari.jpg",
         audio: "https://files.catbox.moe/6qgcyu.mp3"
       },
       {
         title: "Để Anh Lương Thiện REMIX",
         artist: "HUY PT REMIX",
-        cover: "https://byvn.net/LUW8",
+        cover: "https://files.catbox.moe/fkwp0o.jpg",
         audio: "https://files.catbox.moe/6b53cn.mp3"
       },
       {
