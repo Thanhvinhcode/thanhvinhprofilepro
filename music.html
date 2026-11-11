@@ -94,8 +94,8 @@
   align-items: center;
   justify-content: center;
   color: #071b0e;
-  background: #4ad8eb;
-  border: 1px solid #2bd1ee;
+  background: #14ec43;
+  border: 1px solid #08f557;
   border-radius: 50%;
   font-size: 22px;
   cursor: pointer;
@@ -764,6 +764,66 @@
   }
 }
 
+/* NÚT MỞ DANH SÁCH BÀI HÁT */
+.admin-list-toggle {
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+#toggleAdminSongsBtn {
+  padding: 13px 20px;
+  border: 1px solid #1ed760;
+  border-radius: 10px;
+  background: #203b32;
+  color: #1ed760;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .25s;
+}
+
+#toggleAdminSongsBtn:hover {
+  background: #1ed760;
+  color: #102018;
+  transform: translateY(-2px);
+}
+
+/* Ô TÌM KIẾM BÀI HÁT */
+.admin-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  padding: 0 16px;
+  background: #202c2a;
+  border: 1px solid #49615a;
+  border-radius: 12px;
+}
+
+.admin-search span {
+  font-size: 20px;
+}
+
+.admin-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px 0;
+  color: white;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+
+.admin-search input::placeholder {
+  color: #9aaba4;
+}
+
+.admin-search:focus-within {
+  border-color: #1ed760;
+  box-shadow: 0 0 0 3px rgba(30, 215, 96, .12);
+}
+
 
 
 
@@ -877,8 +937,30 @@
 
     <p id="songAdminMessage" aria-live="polite"></p>
 
-    <h3>Danh sách bài hát quản lý</h3>
-    <div id="adminSongList"></div>
+
+<!-- NÚT MỞ DANH SÁCH BÀI HÁT -->
+<div class="admin-list-toggle">
+  <button type="button" id="toggleAdminSongsBtn">
+    ☰ DANH SÁCH BÀI HÁT
+  </button>
+</div>
+
+<!-- KHU VỰC TÌM KIẾM VÀ DANH SÁCH -->
+<div id="adminSongArea" style="display:none;">
+
+  <div class="admin-search">
+    <span>🔎</span>
+    <input
+      type="search"
+      id="adminSongSearch"
+      placeholder="Tìm tên bài hát hoặc ca sĩ..."
+    >
+  </div>
+
+  <div id="adminSongList"></div>
+
+</div>
+
   </div>
 
 </section>
@@ -2045,11 +2127,13 @@ adminLoginForm.addEventListener("submit", async (event) => {
     }
 
     // Đăng nhập thành công
-    adminLoginBtn.textContent = "✓ ĐÃ ĐĂNG NHẬP";
+    adminLoginBtn.textContent = "✓";
     adminModal.style.display = "none";
 
     // Hiện bảng quản trị
     document.getElementById("adminPanel").style.display = "block";
+    // Tải lại danh sách bài hát khi mở bảng quản trị
+await loadSongsFromSupabase();
 
     // Cuộn đến bảng quản trị
     document.getElementById("adminPanel").scrollIntoView({
@@ -2076,6 +2160,161 @@ const songAdminForm = document.getElementById("songAdminForm");
 const songAdminMessage = document.getElementById("songAdminMessage");
 const adminSongList = document.getElementById("adminSongList");
 const saveSongBtn = document.getElementById("saveSongBtn");
+
+// HIỂN THỊ DANH SÁCH BÀI HÁT VÀ NÚT SỬA
+function renderAdminSongList() {
+  adminSongList.innerHTML = "";
+
+
+// CHUYỂN TIẾNG VIỆT CÓ DẤU THÀNH KHÔNG DẤU
+function normalizeSearch(text) {
+  return (text || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase()
+    .trim();
+}
+
+// HIỂN THỊ VÀ TÌM KIẾM DANH SÁCH BÀI HÁT
+function renderAdminSongList() {
+  adminSongList.innerHTML = "";
+
+  const keyword = normalizeSearch(
+    document.getElementById("adminSongSearch").value
+  );
+
+  const databaseSongs = SONGS.filter(song => {
+    if (!song.id) return false;
+
+    const searchText = normalizeSearch(
+      song.title + " " + song.artist
+    );
+
+    return searchText.includes(keyword);
+  });
+
+  if (databaseSongs.length === 0) {
+    adminSongList.textContent = "Không tìm thấy bài hát phù hợp.";
+    return;
+  }
+
+  databaseSongs.forEach(song => {
+    const item = document.createElement("div");
+
+    item.style.cssText =
+      "display:flex;justify-content:space-between;align-items:center;" +
+      "gap:12px;padding:14px;margin-bottom:10px;" +
+      "background:#202c2a;border-radius:10px;flex-wrap:wrap;";
+
+    const info = document.createElement("div");
+
+    const title = document.createElement("strong");
+    title.textContent = song.title;
+
+    const artist = document.createElement("p");
+    artist.textContent = song.artist || "Chưa có ca sĩ";
+    artist.style.color = "#aaa";
+
+    info.append(title, artist);
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.textContent = "✏️ SỬA";
+
+    editButton.style.cssText =
+      "padding:10px 18px;background:#1ed760;color:#071b0e;" +
+      "border:0;border-radius:8px;cursor:pointer;font-weight:bold;";
+
+    editButton.addEventListener("click", () => {
+      document.getElementById("editSongId").value = song.id;
+      document.getElementById("newSongTitle").value = song.title;
+      document.getElementById("newSongArtist").value = song.artist || "";
+      document.getElementById("newSongAudio").value = song.audio || "";
+      document.getElementById("newSongCover").value = song.cover || "";
+
+      saveSongBtn.textContent = "LƯU THAY ĐỔI";
+      document.getElementById("cancelEditBtn").style.display = "inline-block";
+
+      songAdminForm.scrollIntoView({ behavior: "smooth" });
+    });
+
+    item.append(info, editButton);
+    adminSongList.appendChild(item);
+  });
+}
+
+// NÚT MỞ / ĐÓNG DANH SÁCH
+const adminSongArea = document.getElementById("adminSongArea");
+const toggleAdminSongsBtn = document.getElementById("toggleAdminSongsBtn");
+const adminSongSearch = document.getElementById("adminSongSearch");
+
+toggleAdminSongsBtn.addEventListener("click", () => {
+  const isHidden = adminSongArea.style.display === "none";
+
+  adminSongArea.style.display = isHidden ? "block" : "none";
+
+  toggleAdminSongsBtn.textContent = isHidden
+    ? "✕ ĐÓNG DANH SÁCH BÀI HÁT"
+    : "☰ DANH SÁCH BÀI HÁT";
+});
+
+// TÌM KIẾM NGAY KHI GÕ
+adminSongSearch.addEventListener("input", () => {
+  renderAdminSongList();
+});
+
+  if (databaseSongs.length === 0) {
+    adminSongList.textContent = "Chưa có bài hát trên Supabase.";
+    return;
+  }
+
+  databaseSongs.forEach(song => {
+    const item = document.createElement("div");
+
+    item.style.cssText =
+      "display:flex;justify-content:space-between;align-items:center;" +
+      "padding:14px;margin-bottom:10px;background:#202c2a;" +
+      "border-radius:10px;gap:12px;";
+
+    const info = document.createElement("div");
+
+    const title = document.createElement("strong");
+    title.textContent = song.title;
+
+    const artist = document.createElement("p");
+    artist.textContent = song.artist || "Chưa có ca sĩ";
+    artist.style.color = "#aaa";
+
+    info.append(title, artist);
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.textContent = "✏️ SỬA";
+
+    editButton.style.cssText =
+      "padding:10px 18px;background:#1ed760;color:#071b0e;" +
+      "border:0;border-radius:8px;cursor:pointer;font-weight:bold;";
+
+    editButton.addEventListener("click", () => {
+      document.getElementById("editSongId").value = song.id;
+      document.getElementById("newSongTitle").value = song.title;
+      document.getElementById("newSongArtist").value = song.artist || "";
+      document.getElementById("newSongAudio").value = song.audio || "";
+      document.getElementById("newSongCover").value = song.cover || "";
+
+      saveSongBtn.textContent = "LƯU THAY ĐỔI";
+      document.getElementById("cancelEditBtn").style.display = "inline-block";
+
+      songAdminForm.scrollIntoView({ behavior: "smooth" });
+    });
+
+    item.append(info, editButton);
+    adminSongList.appendChild(item);
+  });
+}
+
 
 // Xử lý thêm bài hát mới
 songAdminForm.addEventListener("submit", async (event) => {
