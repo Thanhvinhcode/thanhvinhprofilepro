@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panda Adventure 100 - Vinh Media</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:#fff;font-family:"Times New Roman",serif;background:radial-gradient(circle at top,#3a5682,#10172c 75%)}
+.wrap{width:min(940px,94%);margin:auto;padding:22px 0 35px;text-align:center}h1{margin:6px 0;color:#c7e7ff;font-size:clamp(32px,6vw,48px);text-shadow:0 0 20px #62b8ff}.sub{color:#d4e5fa}
+.stats{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:14px 0}.stat{background:#202f50;border:1px solid #607eaf;border-radius:12px;padding:9px 17px;min-width:100px}.stat b{display:block;color:#bce3ff;font-size:23px;margin-top:3px}
+#mission{max-width:760px;margin:12px auto;background:#1b2948;border:1px solid #5878a8;border-radius:14px;padding:12px;color:#e4f2ff}
+#stage{position:relative;width:min(760px,100%);margin:auto;border:2px solid #6c91c7;border-radius:18px;overflow:hidden;background:#8bd5f4;box-shadow:0 0 28px #65baff33}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+#overlay{position:absolute;inset:0;background:#111b31eF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:14px;overflow:auto}
+#overlay h2{margin:0;color:#c7e7ff;font-size:28px}#overlay p{margin:2px;color:#e3efff}
+button{border:0;border-radius:10px;padding:11px 18px;background:#287bc2;color:#fff;font:17px "Times New Roman",serif;cursor:pointer}button:hover{background:#439de5}.secondary{background:#455a7b}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:min(600px,100%);max-height:46vh;overflow:auto}.level{padding:7px 2px;background:#263c60;border:1px solid #6c8cbb;font-size:14px}.level.sel{outline:2px solid #bce3ff;background:#276eae}.level small{display:block;color:#d7e9ff;font-size:10px}.stars{color:#ffdf76}
+.pad{display:flex;justify-content:center;gap:12px;margin:12px auto}.pad button{min-width:72px;font-size:20px;touch-action:manipulation}.tip{color:#b9cce5;font-size:14px}.back{display:inline-block;margin-top:18px;color:#bfe4ff;text-decoration:none}
+</style></head><body><main class="wrap">
+<h1>🐼 PANDA ADVENTURE 100</h1><p class="sub">Phiêu lưu cùng gấu trúc – phong cách cổ điển, hiệu ứng hiện đại</p>
+<div class="stats"><div class="stat">Màn<strong id="level">1</strong></div><div class="stat">Điểm<strong id="score">0</strong></div><div class="stat">Tre<strong id="bamboo">0/3</strong></div><div class="stat">Mạng<strong id="lives">❤️❤️❤️</strong></div></div>
+<div id="mission">🎯 Thu thập tre và đến cổng đích!</div>
+<div id="stage"><canvas id="game" width="760" height="430"></canvas><div id="overlay"><h2>🐼 PANDA ADVENTURE</h2><p>Nhảy qua chướng ngại, thu thập tre và tới cổng đích.</p><div class="actions"><button id="choose">CHỌN MÀN</button><button id="play">BẮT ĐẦU</button></div></div></div>
+<div class="pad"><button id="left">◀ Trái</button><button id="jump">⬆ Nhảy</button><button id="right">Phải ▶</button></div>
+<p class="tip">Máy tính: A/D hoặc ←/→ để di chuyển, Space/W/↑ để nhảy · Điện thoại: dùng các nút bên dưới</p>
+<div class="actions"><button class="secondary" id="map">🗺 BẢN ĐỒ 100 MÀN</button></div><a class="back" href="game-center.html">← Quay lại thư viện trò chơi</a>
+</main>
+<script>
+const cv=document.getElementById('game'),ctx=cv.getContext('2d'),overlay=document.getElementById('overlay'),$=id=>document.getElementById(id);
+const KEY='vm_panda100';let records={};try{records=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+let level=1,score=0,lives=3,tre=0,running=false,raf=null,last=0,audio=null,keys={},player,platforms=[],bamboos=[],hazards=[],goal,particles=[];
+const cfg=Array.from({length:100},(_,i)=>({need:2+Math.floor(i/12),speed:2.6+Math.min(2.8,i*.025),hazards:Math.min(8,1+Math.floor(i/13)),platforms:5+Math.min(4,Math.floor(i/18))}));
+function sound(type){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let o=audio.createOscillator(),g=audio.createGain(),n=audio.currentTime;o.connect(g);g.connect(audio.destination);o.type=type==='jump'?'sine':type==='collect'?'triangle':'square';let f=type==='jump'?420:type==='collect'?760:type==='win'?950:120;o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(f*1.5,n+.12);g.gain.setValueAtTime(.001,n);g.gain.exponentialRampToValueAtTime(.13,n+.015);g.gain.exponentialRampToValueAtTime(.001,n+.2);o.start(n);o.stop(n+.21)}catch(e){}}
+function update(){ $('level').textContent=level;$('score').textContent=score;$('bamboo').textContent=tre+'/'+cfg[level-1].need;$('lives').textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives);$('mission').textContent=`🎯 Màn ${level}: Thu thập ${cfg[level-1].need} khúc tre và chạm cổng đích. Chướng ngại: ${cfg[level-1].hazards}`}
+function buildLevel(){platforms=[{x:0,y:382,w:760,h:48},{x:130,y:320,w:125,h:16},{x:300,y:270,w:120,h:16},{x:485,y:320,w:115,h:16}];let extra=cfg[level-1].platforms-5;for(let i=0;i<extra;i++)platforms.push({x:80+(i*137)%570,y:235-(i%3)*48,w:95,h:14});bamboos=[];for(let i=0;i<cfg[level-1].need;i++){let p=platforms[(i+1)%platforms.length];bamboos.push({x:p.x+25+(i*19)%(Math.max(30,p.w-35)),y:p.y-25,got:false})}hazards=[];for(let i=0;i<cfg[level-1].hazards;i++){let p=platforms[(i*2+1)%platforms.length];hazards.push({x:p.x+Math.min(p.w-25,30+(i*13)%Math.max(35,p.w-45)),y:p.y-18,r:13,phase:i})}player={x:35,y:330,vx:0,vy:0,w:34,h:48,on:false,inv:0};goal={x:700,y:326,w:32,h:56};}
+function start(l=level){level=Math.max(1,Math.min(100,+l||1));score=0;tre=0;lives=3;particles=[];buildLevel();running=true;last=0;overlay.style.display='none';update();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+function panda(x,y){ctx.save();ctx.translate(x,y); // body
+ctx.fillStyle='#f7f7f7';ctx.beginPath();ctx.ellipse(17,32,13,16,0,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#151923';ctx.beginPath();ctx.ellipse(8,34,7,12,-.4,0,Math.PI*2);ctx.ellipse(26,34,7,12,.4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#f7f7f7';ctx.beginPath();ctx.arc(17,13,16,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#151923';ctx.beginPath();ctx.arc(5,1,7,0,Math.PI*2);ctx.arc(29,1,7,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.ellipse(10,12,4,6,-.4,0,Math.PI*2);ctx.ellipse(24,12,4,6,.4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='white';ctx.beginPath();ctx.arc(10,11,1.5,0,7);ctx.arc(24,11,1.5,0,7);ctx.fill();
+ctx.fillStyle='#151923';ctx.beginPath();ctx.arc(17,18,2.5,0,7);ctx.fill();ctx.strokeStyle='#151923';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(17,20,4,.2,2.8);ctx.stroke();
+ctx.restore()}
+function draw(){let g=ctx.createLinearGradient(0,0,0,430);g.addColorStop(0,'#75d5fa');g.addColorStop(1,'#d8f6ff');ctx.fillStyle=g;ctx.fillRect(0,0,760,430);
+for(let i=0;i<5;i++){ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.ellipse((i*177+40)%760,55+(i%2)*35,35,12,0,0,7);ctx.fill()}
+platforms.forEach(p=>{ctx.fillStyle='#3d9b59';ctx.fillRect(p.x,p.y,p.w,p.h);ctx.fillStyle='#8bce75';ctx.fillRect(p.x,p.y,p.w,5);ctx.fillStyle='#795638';ctx.fillRect(p.x,p.y+6,p.w,p.h-6)});
+bamboos.forEach(b=>{if(b.got)return;ctx.save();ctx.translate(b.x,b.y);ctx.rotate(-.4);ctx.fillStyle='#3caa53';ctx.fillRect(-5,-13,10,27);ctx.strokeStyle='#b8f17c';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-5,-4);ctx.lineTo(5,-4);ctx.moveTo(-5,5);ctx.lineTo(5,5);ctx.stroke();ctx.restore()});
+hazards.forEach(h=>{let bob=Math.sin(Date.now()/180+h.phase)*2;ctx.fillStyle='#e84e59';ctx.beginPath();ctx.arc(h.x,h.y+bob,h.r,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(h.x-4,h.y-3+bob,2,0,7);ctx.arc(h.x+4,h.y-3+bob,2,0,7);ctx.fill()});
+ctx.fillStyle='#ffd75a';ctx.fillRect(goal.x,goal.y,goal.w,goal.h);ctx.fillStyle='#fff3b0';ctx.fillRect(goal.x+6,goal.y+7,20,12);ctx.fillStyle='#9d642d';ctx.fillRect(goal.x+23,goal.y+25,3,3);
+particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life/25);ctx.fillStyle='#8bdc59';ctx.beginPath();ctx.arc(p.x,p.y,4,0,7);ctx.fill()});ctx.globalAlpha=1;
+if(player)panda(player.x,player.y)}
+function burst(x,y){for(let i=0;i<9;i++)particles.push({x,y,vx:(Math.random()-.5)*5,vy:(Math.random()-.5)*5,life:25})}
+function loseLife(){lives--;sound('hit');player.x=35;player.y=320;player.vx=0;player.vy=0;player.inv=70;update();if(lives<=0)finish(false)}
+function loop(t){if(!running)return;let dt=Math.min((t-last)/16.67||1,2);last=t;
+player.vx=((keys.right?1:0)-(keys.left?1:0))*cfg[level-1].speed;player.x+=player.vx*dt;player.vy+=.48*dt;player.y+=player.vy*dt;player.on=false;
+platforms.forEach(p=>{if(player.vy>=0&&player.x+player.w>p.x&&player.x<p.x+p.w&&player.y+player.h>=p.y&&player.y+player.h<=p.y+18){player.y=p.y-player.h;player.vy=0;player.on=true}});
+if(player.x<0)player.x=0;if(player.x+player.w>760)player.x=760-player.w;
+if(player.y>440){loseLife()}
+bamboos.forEach(b=>{if(!b.got&&Math.abs((player.x+17)-b.x)<25&&Math.abs((player.y+22)-b.y)<28){b.got=true;tre++;score+=20;burst(b.x,b.y);sound('collect');update();if(tre>=cfg[level-1].need){} }});
+hazards.forEach(h=>{if(Math.abs(player.x+17-h.x)<23&&Math.abs(player.y+25-h.y)<25&&player.inv<=0)loseLife()});
+if(player.inv>0)player.inv--;
+if(player.x+player.w>goal.x&&player.y+player.h>goal.y&&tre>=cfg[level-1].need){finish(true);return}
+particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt});particles=particles.filter(p=>p.life>0);
+draw();raf=requestAnimationFrame(loop)}
+function finish(win){if(!running)return;running=false;cancelAnimationFrame(raf);if(win){let old=records[level]||{stars:0,best:0};records[level]={stars:Math.max(old.stars,3),best:Math.max(old.best,score)};localStorage.setItem(KEY,JSON.stringify(records));sound('win')}
+overlay.style.display='flex';overlay.innerHTML=`<h2>${win?'🏆 Gấu trúc hoàn thành màn '+level:'💫 Thử lại nhé!'}</h2><p>Điểm: ${score} · Tre: ${tre}/${cfg[level-1].need}</p>${win?'<p class="stars">⭐⭐⭐</p>':'<p>Thu thập đủ tre và tới cổng đích để thắng.</p>'}<div class="actions"><button id="retry">CHƠI LẠI</button><button class="secondary" id="levels">CHỌN MÀN</button>${win&&level<100?'<button id="next">MÀN TIẾP →</button>':''}</div>`;$('retry').onclick=()=>start(level);$('levels').onclick=map;if($('next'))$('next').onclick=()=>start(level+1)}
+function map(){running=false;cancelAnimationFrame(raf);overlay.style.display='flex';let html=Array.from({length:100},(_,i)=>{let n=i+1,r=records[n]||{};return `<button class="level" data-l="${n}">MÀN ${n}<small>${cfg[i].need} khúc tre</small><span class="stars">${'★'.repeat(r.stars||0)}${'☆'.repeat(3-(r.stars||0))}</span></button>`}).join('');overlay.innerHTML=`<h2>🗺 CHỌN MÀN GẤU TRÚC</h2><p>Tự do chọn bất kỳ màn nào từ 1 đến 100.</p><div class="grid">${html}</div><p id="picked">Đang chọn màn ${level}</p><div class="actions"><button id="go">CHƠI MÀN NÀY</button><button class="secondary" id="close">QUAY LẠI</button></div>`;overlay.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{level=+b.dataset.l;$('picked').textContent='Đang chọn màn '+level;overlay.querySelectorAll('.level').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');update()});$('go').onclick=()=>start(level);$('close').onclick=home}
+function home(){overlay.style.display='flex';overlay.innerHTML=`<h2>🐼 PANDA ADVENTURE</h2><p>Chọn màn bất kỳ hoặc tiếp tục màn ${level}.</p><div class="actions"><button id="choose2">CHỌN MÀN</button><button id="play2">CHƠI</button></div>`;$('choose2').onclick=map;$('play2').onclick=()=>start(level)}
+function jump(){if(running&&player.on){player.vy=-10.5;player.on=false;sound('jump')}}
+document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' ','a','d','w','A','D','W'].includes(e.key))e.preventDefault();if(['ArrowLeft','a','A'].includes(e.key))keys.left=true;if(['ArrowRight','d','D'].includes(e.key))keys.right=true;if(['ArrowUp','w','W',' '].includes(e.key))jump()});
+document.addEventListener('keyup',e=>{if(['ArrowLeft','a','A'].includes(e.key))keys.left=false;if(['ArrowRight','d','D'].includes(e.key))keys.right=false});
+function hold(id,key){let b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();keys[key]=true});['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>keys[key]=false))}
+hold('left','left');hold('right','right');$('jump').addEventListener('pointerdown',e=>{e.preventDefault();jump()});
+$('choose').onclick=map;$('play').onclick=()=>start(level);$('map').onclick=map;buildLevel();draw();update();
+</script></body></html>

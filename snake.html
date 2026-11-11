@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Snake 100 - Vinh Media</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:#effff4;font-family:"Times New Roman",serif;background:radial-gradient(circle at top,#174c3d,#071b19 75%)}
+.wrap{width:min(900px,94%);margin:auto;padding:22px 0 35px;text-align:center}h1{margin:6px 0;color:#8dffad;font-size:clamp(32px,6vw,48px);text-shadow:0 0 18px #2bdc78}.sub{color:#c2e8d0}
+.stats{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px 0}.stat{background:#10382d;border:1px solid #3d936a;border-radius:12px;padding:9px 17px;min-width:100px}.stat b{display:block;color:#9dffbb;font-size:23px;margin-top:3px}
+#mission{max-width:700px;margin:12px auto;background:#0d3028;border:1px solid #397b5b;border-radius:15px;padding:12px;color:#d9ffe5}
+#board{width:min(560px,100%);margin:auto;position:relative;border:2px solid #55b77e;border-radius:18px;overflow:hidden;background:#071e19;box-shadow:0 0 25px #24d47733}
+canvas{width:100%;display:block;touch-action:none}
+#overlay{position:absolute;inset:0;background:#041510ed;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;padding:14px;overflow:auto}
+#overlay h2{margin:0;color:#9dffbb;font-size:28px}#overlay p{margin:2px;color:#d6f3df}
+button{border:0;border-radius:10px;padding:11px 18px;background:#20a85e;color:white;font:17px "Times New Roman",serif;cursor:pointer}button:hover{background:#32c875}.secondary{background:#345c4b}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:min(560px,100%);max-height:45vh;overflow:auto}.level{padding:7px 2px;background:#123c30;border:1px solid #397d5b;font-size:14px}.level.sel{outline:2px solid #9dffbb;background:#167446}.level small{display:block;color:#c5ead3;font-size:10px}.stars{color:#ffd66b}
+.controls{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,48px);gap:5px;justify-content:center;margin:13px auto 4px}.controls button{padding:4px;font-size:22px;background:#194d3b;touch-action:manipulation}.controls .up{grid-column:2}.controls .left{grid-column:1;grid-row:2}.controls .down{grid-column:2;grid-row:2}.controls .right{grid-column:3;grid-row:2}
+.tip{font-size:14px;color:#a9d2b9}.back{display:inline-block;margin-top:18px;color:#a4eec0;text-decoration:none}
+</style></head>
+<body><main class="wrap">
+<h1>🐍 SNAKE 100</h1><p class="sub">Rắn săn mồi cổ điển – phiên bản Vinh Media hiện đại</p>
+<div class="stats"><div class="stat">Màn<strong id="level">1</strong></div><div class="stat">Điểm<strong id="score">0</strong></div><div class="stat">Mồi<strong id="eaten">0/5</strong></div><div class="stat">Mạng<strong id="lives">❤️❤️❤️</strong></div></div>
+<div id="mission">🎯 Nhiệm vụ: Ăn 5 mồi và tránh va chạm!</div>
+<div id="board"><canvas id="game" width="480" height="480"></canvas><div id="overlay"><h2>🐍 SNAKE 100</h2><p>Chọn màn bất kỳ rồi điều khiển rắn ăn mồi.</p><div class="actions"><button id="choose">CHỌN MÀN</button><button id="play">BẮT ĐẦU</button></div></div></div>
+<div class="controls"><button class="up" data-dir="up">▲</button><button class="left" data-dir="left">◀</button><button class="down" data-dir="down">▼</button><button class="right" data-dir="right">▶</button></div>
+<p class="tip">Máy tính: phím mũi tên / WASD · Điện thoại: nút điều khiển hoặc vuốt bảng</p>
+<div class="actions"><button class="secondary" id="map">🗺 BẢN ĐỒ 100 MÀN</button></div><a class="back" href="game-center.html">← Quay lại thư viện trò chơi</a>
+</main>
+<script>
+const cv=document.getElementById('game'),ctx=cv.getContext('2d'),overlay=document.getElementById('overlay');
+const $=id=>document.getElementById(id),CELL=24,COLS=20,ROWS=20,KEY='vm_snake100';
+let records={};try{records=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+let level=1,snake=[],dir={x:1,y:0},nextDir={x:1,y:0},food={x:10,y:8},score=0,eaten=0,lives=3,running=false,timer=null,audio=null,obstacles=[];
+const missions=Array.from({length:100},(_,i)=>({goal:5+Math.floor(i/8),speed:Math.max(65,155-i),walls:i<20?0:i<45?3:i<70?6:i<90?9:13}));
+function sound(kind){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let o=audio.createOscillator(),g=audio.createGain(),n=audio.currentTime;o.connect(g);g.connect(audio.destination);o.type=kind==='eat'?'sine':'triangle';o.frequency.setValueAtTime(kind==='eat'?650:kind==='win'?880:150,n);o.frequency.exponentialRampToValueAtTime(kind==='eat'?1050:kind==='win'?1200:65,n+.12);g.gain.setValueAtTime(.001,n);g.gain.exponentialRampToValueAtTime(.12,n+.015);g.gain.exponentialRampToValueAtTime(.001,n+.18);o.start(n);o.stop(n+.19)}catch(e){}}
+function update(){ $('level').textContent=level;$('score').textContent=score;$('eaten').textContent=eaten+'/'+missions[level-1].goal;$('lives').textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives);$('mission').textContent=`🎯 Màn ${level}: Ăn ${missions[level-1].goal} mồi · Tốc độ ${missions[level-1].speed}ms · Chướng ngại: ${missions[level-1].walls}`}
+function freeCell(){let p;do{p={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)}}while(snake.some(s=>s.x===p.x&&s.y===p.y)||obstacles.some(s=>s.x===p.x&&s.y===p.y));return p}
+function draw(){ctx.clearRect(0,0,480,480);for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){ctx.fillStyle=(x+y)%2?'#0b2a20':'#0e3326';ctx.fillRect(x*CELL,y*CELL,CELL,CELL)}
+obstacles.forEach(p=>{ctx.fillStyle='#a6a6a6';ctx.fillRect(p.x*CELL+3,p.y*CELL+3,18,18);ctx.fillStyle='#e6e6e6';ctx.fillText('▧',p.x*CELL+5,p.y*CELL+18)});
+ctx.font='20px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🍎',food.x*CELL+12,food.y*CELL+12);
+snake.forEach((p,i)=>{ctx.fillStyle=i===0?'#a8ff8c':'#37c978';ctx.beginPath();ctx.roundRect(p.x*CELL+2,p.y*CELL+2,20,20,7);ctx.fill();if(i===0){ctx.fillStyle='#092419';ctx.beginPath();ctx.arc(p.x*CELL+8,p.y*CELL+9,2,0,7);ctx.arc(p.x*CELL+16,p.y*CELL+9,2,0,7);ctx.fill()}})}
+function setDir(x,y){if(x!==-dir.x||y!==-dir.y)nextDir={x,y}}
+function start(l=level){level=Math.max(1,Math.min(100,Number(l)||1));snake=[{x:9,y:10},{x:8,y:10},{x:7,y:10}];dir={x:1,y:0};nextDir={...dir};score=0;eaten=0;lives=3;obstacles=[];let n=missions[level-1].walls;while(obstacles.length<n){let p={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};if(p.x>4&&!snake.some(s=>s.x===p.x&&s.y===p.y)&&!obstacles.some(s=>s.x===p.x&&s.y===p.y))obstacles.push(p)}food=freeCell();running=true;overlay.style.display='none';update();draw();clearInterval(timer);timer=setInterval(tick,missions[level-1].speed)}
+function tick(){if(!running)return;dir=nextDir;let head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};let hit=head.x<0||head.y<0||head.x>=COLS||head.y>=ROWS||obstacles.some(p=>p.x===head.x&&p.y===head.y)||snake.slice(0,-1).some(p=>p.x===head.x&&p.y===head.y);if(hit){lives--;sound('hit');if(lives<=0){finish(false);return}snake=[{x:9,y:10},{x:8,y:10},{x:7,y:10}];dir={x:1,y:0};nextDir={...dir};food=freeCell();update();draw();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){eaten++;score+=10;sound('eat');food=freeCell();if(eaten>=missions[level-1].goal){finish(true);return}}else snake.pop();update();draw()}
+function finish(win){running=false;clearInterval(timer);if(win){let old=records[level]||{stars:0,best:0};records[level]={stars:Math.max(old.stars,3),best:Math.max(old.best,score)};localStorage.setItem(KEY,JSON.stringify(records));sound('win')}overlay.style.display='flex';overlay.innerHTML=`<h2>${win?'🏆 Hoàn thành màn '+level:'💥 Hết mạng rồi!'}</h2><p>Điểm: ${score} · Mồi: ${eaten}/${missions[level-1].goal}</p>${win?'<p class="stars">⭐⭐⭐</p>':''}<div class="actions"><button id="retry">CHƠI LẠI</button><button class="secondary" id="levels">CHỌN MÀN</button>${win&&level<100?'<button id="next">MÀN TIẾP →</button>':''}</div>`;$('retry').onclick=()=>start(level);$('levels').onclick=map;if($('next'))$('next').onclick=()=>start(level+1)}
+function map(){running=false;clearInterval(timer);overlay.style.display='flex';let html=Array.from({length:100},(_,i)=>{let n=i+1,r=records[n]||{};return `<button class="level" data-l="${n}">MÀN ${n}<small>${missions[i].goal} mồi</small><span class="stars">${'★'.repeat(r.stars||0)}${'☆'.repeat(3-(r.stars||0))}</span></button>`}).join('');overlay.innerHTML=`<h2>🗺 CHỌN MÀN RẮN SĂN MỒI</h2><p>Chọn tự do từ màn 1 đến màn 100.</p><div class="grid">${html}</div><p id="picked">Đang chọn màn ${level}</p><div class="actions"><button id="go">CHƠI MÀN NÀY</button><button class="secondary" id="close">QUAY LẠI</button></div>`;overlay.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{level=+b.dataset.l;$('picked').textContent='Đang chọn màn '+level;overlay.querySelectorAll('.level').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')});$('go').onclick=()=>start(level);$('close').onclick=home}
+function home(){overlay.style.display='flex';overlay.innerHTML=`<h2>🐍 SNAKE 100</h2><p>Chọn màn bất kỳ hoặc tiếp tục màn ${level}.</p><div class="actions"><button id="choose2">CHỌN MÀN</button><button id="play2">CHƠI</button></div>`;$('choose2').onclick=map;$('play2').onclick=()=>start(level)}
+document.addEventListener('keydown',e=>{let m={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]};if(m[e.key]){e.preventDefault();setDir(...m[e.key])}});
+document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('click',()=>{let d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[b.dataset.dir];setDir(...d)}));
+let touch=null;cv.addEventListener('pointerdown',e=>touch={x:e.clientX,y:e.clientY});cv.addEventListener('pointerup',e=>{if(!touch)return;let dx=e.clientX-touch.x,dy=e.clientY-touch.y;if(Math.abs(dx)+Math.abs(dy)>15){if(Math.abs(dx)>Math.abs(dy))setDir(Math.sign(dx),0);else setDir(0,Math.sign(dy))}touch=null});
+$('choose').onclick=map;$('play').onclick=()=>start(level);$('map').onclick=map;draw();update();
+</script></body></html>
