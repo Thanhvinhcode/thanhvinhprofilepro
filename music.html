@@ -607,6 +607,164 @@
   }
 }
 
+
+
+
+
+
+
+
+
+
+/* ==============================
+   GIAO DIỆN BẢNG QUẢN TRỊ
+============================== */
+
+.admin-panel {
+  width: min(1100px, 94%);
+  margin: 35px auto;
+  padding: 28px;
+  background: linear-gradient(145deg, #172b2b, #10201f);
+  border: 1px solid rgba(30, 215, 96, .25);
+  border-radius: 20px;
+  color: #fff;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, .3);
+}
+
+.admin-dashboard {
+  width: 100%;
+}
+
+.admin-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.admin-heading h2 {
+  color: #1ed760;
+  font-size: 25px;
+  margin: 0 0 8px;
+}
+
+.admin-heading p {
+  color: #b8c9c5;
+  margin: 0;
+}
+
+#adminLogoutBtn,
+#saveSongBtn,
+#cancelEditBtn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: .25s;
+}
+
+#adminLogoutBtn {
+  background: #303f3d;
+  color: white;
+}
+
+#saveSongBtn {
+  background: #1ed760;
+  color: #102018;
+  margin-top: 18px;
+}
+
+#cancelEditBtn {
+  background: #465653;
+  color: white;
+  margin: 18px 0 0 8px;
+}
+
+#adminLogoutBtn:hover,
+#saveSongBtn:hover,
+#cancelEditBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+#songAdminForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 22px;
+  background: rgba(255, 255, 255, .045);
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 15px;
+}
+
+#songAdminForm label {
+  color: #d8e8e2;
+  font-weight: bold;
+  align-self: end;
+}
+
+#songAdminForm input:not([type="hidden"]) {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  color: white;
+  background: #202c2a;
+  border: 1px solid #49615a;
+  border-radius: 9px;
+  outline: none;
+}
+
+#songAdminForm input:focus {
+  border-color: #1ed760;
+  box-shadow: 0 0 0 3px rgba(30, 215, 96, .12);
+}
+
+#songAdminForm button {
+  width: fit-content;
+}
+
+#songAdminMessage {
+  color: #1ed760;
+  margin: 15px 0;
+}
+
+.admin-dashboard h3 {
+  color: #1ed760;
+  margin-top: 30px;
+}
+
+#adminSongList {
+  display: grid;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+@media (max-width: 650px) {
+  .admin-panel {
+    padding: 17px;
+  }
+
+  #songAdminForm {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+
+  #songAdminForm button {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+
+
+
+
+
+
   </style>
 </head>
 
@@ -1848,13 +2006,21 @@ adminModal.addEventListener("click", (event) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
 // Xử lý đăng nhập bằng Supabase
 adminLoginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const email = document.getElementById("adminEmail").value.trim();
   const password = document.getElementById("adminPassword").value;
-
   const submitButton = document.getElementById("adminSubmit");
 
   submitButton.disabled = true;
@@ -1876,33 +2042,34 @@ adminLoginForm.addEventListener("submit", async (event) => {
     return;
   }
 
- if (data.user) {
-  // Chỉ cho phép đúng tài khoản Admin
-  if (data.user.id !== "103b821e-b685-46ac-93ec-9e501e2bf331") {
-    adminMessage.textContent = "Tài khoản không có quyền quản trị!";
-    await supabaseClient.auth.signOut();
-    return;
+  if (data.user) {
+    // Kiểm tra đúng tài khoản Admin
+    if (data.user.id !== "103b821e-b685-46ac-93ec-9e501e2bf331") {
+      adminMessage.textContent = "Tài khoản không có quyền quản trị!";
+      adminMessage.style.color = "#ff5555";
+      await supabaseClient.auth.signOut();
+      return;
+    }
+
+    // Đăng nhập thành công
+    adminLoginBtn.textContent = "✓ ĐÃ ĐĂNG NHẬP";
+    adminModal.style.display = "none";
+
+    // Hiện bảng quản trị
+    document.getElementById("adminPanel").style.display = "block";
+
+    // Cuộn đến bảng quản trị
+    document.getElementById("adminPanel").scrollIntoView({
+      behavior: "smooth"
+    });
   }
+});
 
-  adminMessage.textContent = "Đăng nhập thành công!";
-  adminLoginBtn.textContent = "✓ ĐÃ ĐĂNG NHẬP";
-
-  // Đóng cửa sổ đăng nhập
-  adminModal.style.display = "none";
-
-  // Hiện bảng quản trị
-  document.getElementById("adminPanel").style.display = "block";
-
-  // Tải danh sách bài hát
-  await loadSongsFromSupabase();
-
-  // Cuộn đến bảng quản trị
-  document.getElementById("adminPanel").scrollIntoView({
-    behavior: "smooth"
-  });
-}
-
+// GIỮ NGUYÊN DÒNG NÀY Ở CUỐI
 loadSongsFromSupabase();
+
+
+
 
   </script>
 </body>
