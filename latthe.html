@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lật hình ghi nhớ - Vinh Media</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:white;
+  font-family:"Times New Roman",serif;
+  background:radial-gradient(circle at top,#17466b,#071525 75%);
+}
+.container{width:min(950px,94%);margin:auto;padding:30px 0 50px;text-align:center}
+h1{font-size:clamp(30px,6vw,46px);color:#69c5ff;text-shadow:0 0 18px #168bd0;margin:5px}
+.subtitle{color:#b9d9ed}
+.levels,.stats,.actions,.stages{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0}
+button{font-family:inherit;cursor:pointer}
+.level-btn,.stage-btn,.action-btn{
+  border:1px solid #4d9bc9;border-radius:10px;padding:11px 17px;
+  color:white;background:#153955;font-size:17px;
+}
+.level-btn.active,.stage-btn.active,.action-btn:hover{
+  background:#168bd0;box-shadow:0 0 14px #168bd0;
+}
+.stage-btn:disabled{opacity:.35;cursor:not-allowed}
+.stat{min-width:95px;padding:11px;border:1px solid #28658b;background:#102c43;border-radius:11px}
+.stat strong{display:block;color:#69c5ff;font-size:22px;margin-top:5px}
+.game-board{display:grid;gap:9px;margin:22px auto;max-width:650px}
+.card{
+  aspect-ratio:1;border:1px solid #3988b8;border-radius:12px;
+  background:linear-gradient(145deg,#17466a,#0c263d);
+  color:white;font-size:clamp(22px,5vw,40px);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .25s,background .25s;
+  box-shadow:0 4px 12px #0005;
+}
+.card:hover{border-color:#70ceff;transform:translateY(-2px)}
+.card.flipped{background:#e4f5ff;color:#123b58;transform:rotateY(180deg)}
+.card.matched{background:#145a43;border-color:#4de4a5;animation:pop .35s}
+@keyframes pop {
+  50% { transform: scale(1.15); }
+}
+
+@keyframes wrongShake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-5px); }
+  40%,80% { transform: translateX(5px); }
+}
+
+@keyframes correctGlow {
+  0% { box-shadow: 0 0 0 #4de4a5; }
+  50% { box-shadow: 0 0 28px #4de4a5; }
+  100% { box-shadow: 0 0 10px #4de4a5; }
+}
+
+.card.wrong {
+  animation: wrongShake .35s ease;
+  border-color: #ff6578;
+  background: #542c3a;
+}
+
+.card.matched {
+  animation: pop .35s, correctGlow .7s;
+}
+.message{min-height:35px;color:#78e8b1;font-size:20px;margin:15px 0}
+.back{display:inline-block;color:#8bcfff;text-decoration:none;margin-top:25px}
+@media(max-width:500px){.game-board{gap:6px}.card{border-radius:8px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧠 MEMORY CHALLENGE</h1>
+  <p class="subtitle">Lật hình ghi nhớ – Chinh phục thử thách</p>
+
+  <div class="levels">
+    <button class="level-btn active" data-pairs="6">Dễ · 6 cặp</button>
+    <button class="level-btn" data-pairs="10">Trung bình · 10 cặp</button>
+    <button class="level-btn" data-pairs="20">Khó · 20 cặp</button>
+  </div>
+
+  <div>
+    <div style="color:#80d2ff">CHỌN MÀN CHƠI</div>
+    <div class="stages" id="stages"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">Điểm<strong id="score">0</strong></div>
+    <div class="stat">Thời gian<strong id="timer">00:00</strong></div>
+    <div class="stat">Lượt lật<strong id="moves">0</strong></div>
+    <div class="stat">Đã ghép<strong id="matched">0/6</strong></div>
+  </div>
+
+  <div id="gameBoard" class="game-board"></div>
+  <div id="message" class="message">Hãy tìm những cặp hình giống nhau!</div>
+
+  <div class="actions">
+    <button class="action-btn" id="restartBtn">↻ Chơi lại màn này</button>
+    <button class="action-btn" id="nextBtn" disabled>Màn tiếp theo →</button>
+  </div>
+
+  <a class="back" href="game-center.html">← Quay lại thư viện trò chơi</a>
+</div>
+
+<script>
+const themes=[
+  ["🐱","🐶","🐼","🦊","🐸","🐵","🦁","🐯","🐰","🐻","🐨","🐮","🐷","🐔","🐧","🦄","🐙","🦋","🐢","🐬"],
+  ["🍎","🍋","🍇","🍉","🍓","🍒","🥝","🍍","🥥","🍑","🍊","🍌","🥑","🍐","🥭","🫐","🍈","🍅","🥕","🌽"],
+  ["💎","👑","🚀","🌈","⚡","🔥","🌙","⭐","🎯","🎮","🎧","🎸","🏆","🧩","🦄","🐉","🛸","🌍","🔮","💠"]
+];
+
+const board=document.getElementById("gameBoard");
+const scoreText=document.getElementById("score");
+const timerText=document.getElementById("timer");
+const movesText=document.getElementById("moves");
+const matchedText=document.getElementById("matched");
+const message=document.getElementById("message");
+const stages=document.getElementById("stages");
+const nextBtn=document.getElementById("nextBtn");
+
+let pairCount=6,stage=1,score=0,moves=0,matchedPairs=0,seconds=0;
+let firstCard=null,secondCard=null,lockBoard=false,started=false,timer=null;
+let unlocked={6:1,10:1,20:1};
+// ÂM THANH VÀ RUNG ĐIỆN THOẠI
+let audioContext;
+
+function playSound(type) {
+  try {
+    audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    const now = audioContext.currentTime;
+
+    if (type === "correct") {
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(650, now);
+      oscillator.frequency.exponentialRampToValueAtTime(1050, now + 0.15);
+    } else {
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(260, now);
+      oscillator.frequency.exponentialRampToValueAtTime(130, now + 0.18);
+    }
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+    oscillator.start(now);
+    oscillator.stop(now + 0.23);
+  } catch (error) {
+    console.log("Không thể phát âm thanh:", error);
+  }
+}
+
+function vibratePhone(pattern) {
+  if ("vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function renderStages(){
+  stages.innerHTML="";
+  for(let i=1;i<=10;i++){
+    const btn=document.createElement("button");
+    btn.className="stage-btn"+(i===stage?" active":"");
+    btn.textContent="Màn "+i;
+    btn.disabled=i>unlocked[pairCount];
+    btn.onclick=()=>{stage=i;renderStages();startGame()};
+    stages.appendChild(btn);
+  }
+}
+
+function startGame(){
+  clearInterval(timer);
+  firstCard=secondCard=null;
+  lockBoard=false;started=false;
+  score=0;moves=0;matchedPairs=0;seconds=0;
+
+  scoreText.textContent=0;
+  movesText.textContent=0;
+  matchedText.textContent=`0/${pairCount}`;
+  timerText.textContent="00:00";
+  message.textContent=`Màn ${stage} – Hãy tìm những cặp hình giống nhau!`;
+  nextBtn.disabled=true;
+  nextBtn.textContent="Màn tiếp theo →";
+
+  const theme=themes[(stage-1)%themes.length];
+  const deck=shuffle([...theme.slice(0,pairCount),...theme.slice(0,pairCount)]);
+
+  board.innerHTML="";
+  board.style.gridTemplateColumns=pairCount===20
+    ?"repeat(5,minmax(0,1fr))":"repeat(4,minmax(0,1fr))";
+
+  deck.forEach(symbol=>{
+    const card=document.createElement("button");
+    card.className="card";
+    card.textContent="❔";
+    card.dataset.symbol=symbol;
+    card.addEventListener("click",()=>flipCard(card));
+    board.appendChild(card);
+  });
+}
+
+function startTimer(){
+  if(started)return;
+  started=true;
+  timer=setInterval(()=>{
+    seconds++;
+    timerText.textContent=
+      String(Math.floor(seconds/60)).padStart(2,"0")+":"+
+      String(seconds%60).padStart(2,"0");
+  },1000);
+}
+
+function flipCard(card){
+  if(lockBoard||card===firstCard||card.classList.contains("matched")||card.classList.contains("flipped"))return;
+  startTimer();
+  card.textContent=card.dataset.symbol;
+  card.classList.add("flipped");
+
+  if(!firstCard){firstCard=card;return}
+  secondCard=card;
+  moves++;
+  movesText.textContent=moves;
+  checkMatch();
+}
+
+
+function checkMatch(){
+  if(firstCard.dataset.symbol === secondCard.dataset.symbol){
+
+    // CHỌN ĐÚNG
+    playSound("correct");
+
+    firstCard.classList.add("matched");
+    secondCard.classList.add("matched");
+
+    score += 100;
+    matchedPairs++;
+
+    scoreText.textContent = score;
+    matchedText.textContent = `${matchedPairs}/${pairCount}`;
+    message.textContent = "✨ Chính xác! Bạn tìm được một cặp!";
+
+    resetTurn();
+
+    if(matchedPairs === pairCount){
+      clearInterval(timer);
+
+      score += Math.max(0, 300 - seconds * 2);
+      scoreText.textContent = score;
+
+      message.textContent = `🏆 Hoàn thành màn ${stage}! Điểm: ${score}`;
+
+      unlocked[pairCount] = Math.max(
+        unlocked[pairCount],
+        stage + 1
+      );
+
+      renderStages();
+      nextBtn.disabled = false;
+    }
+
+  } else {
+
+    // CHỌN SAI
+    lockBoard = true;
+
+    playSound("wrong");
+    vibratePhone(35);
+
+    firstCard.classList.add("wrong");
+    secondCard.classList.add("wrong");
+
+    message.textContent = "❌ Chưa đúng! Thử lại nhé!";
+
+    setTimeout(() => {
+
+      firstCard.textContent = "❔";
+      secondCard.textContent = "❔";
+
+      firstCard.classList.remove("flipped", "wrong");
+      secondCard.classList.remove("flipped", "wrong");
+
+      // MỞ KHÓA ĐỂ CHỌN TIẾP
+      resetTurn();
+
+      message.textContent = "Tiếp tục tìm những cặp hình nhé!";
+
+    }, 850);
+  }
+}
+
+function resetTurn(){
+  firstCard=null;secondCard=null;lockBoard=false;
+}
+
+document.querySelectorAll(".level-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    pairCount=Number(btn.dataset.pairs);
+    stage=1;
+    renderStages();
+    startGame();
+  });
+});
+
+document.getElementById("restartBtn").onclick=startGame;
+nextBtn.onclick=()=>{
+  if(stage<10){stage++;renderStages();startGame()}
+};
+
+renderStages();
+startGame();
+</script>
+</body>
+</html>

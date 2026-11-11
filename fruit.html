@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fruit Slash 100 - Vinh Media</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:white;font-family:"Times New Roman",serif;background:radial-gradient(circle at top,#17466b,#071525 75%)}
+.container{width:min(950px,94%);margin:auto;padding:22px 0 35px;text-align:center}
+h1{font-size:clamp(32px,6vw,48px);color:#77d0ff;text-shadow:0 0 20px #168bd0;margin:8px 0}
+.subtitle{color:#bad8ed;margin:8px 0 18px}
+.stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:15px 0}
+.stat{background:#102e47;border:1px solid #347ca6;border-radius:12px;padding:10px 18px;min-width:105px}
+.stat strong{display:block;color:#75d0ff;font-size:24px;margin-top:4px}
+#missionPanel{background:linear-gradient(135deg,#103451,#0a2035);border:1px solid #347ca6;border-radius:16px;padding:14px;margin:12px auto 16px;max-width:760px;box-shadow:0 0 22px #168bd022}
+.mission-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+#missionTitle{font-size:21px;color:#8cddff;font-weight:bold}
+#missionHint{color:#b9d5e8;font-size:14px}
+#objectives{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.objective{min-width:105px;background:#071b2d;border:1px solid #285878;border-radius:12px;padding:8px 12px}
+.objective .fruit{font-size:27px}
+.objective strong{display:block;color:#fff;font-size:17px;margin-top:2px}
+.objective.done{border-color:#63d78b;background:#103d35}
+.objective.done strong{color:#8df0ad}
+#gameArea{position:relative;height:min(530px,65vh);min-height:360px;overflow:hidden;border:2px solid #347ca6;border-radius:20px;background:linear-gradient(#102c49,#071b2e);box-shadow:0 0 30px #168bd044;touch-action:none;user-select:none}
+#gameCanvas{width:100%;height:100%;display:block;touch-action:none}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;background:#061729ed;overflow:auto}
+#overlay h2{color:#7bd2ff;font-size:30px;margin:0}
+#overlay p{color:#d1e6f5;margin:3px}
+button{border:0;border-radius:11px;padding:11px 20px;color:white;background:#168bd0;font:17px "Times New Roman",serif;cursor:pointer}
+button:hover{background:#39aaf0}
+button.secondary{background:#31536b}
+.actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+.level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;width:min(620px,100%);max-height:48vh;overflow:auto;padding:4px}
+.level-btn{padding:8px 2px;background:#123954;border:1px solid #36769b;border-radius:9px;font-size:15px}
+.level-btn.selected{background:#147eaa;border:2px solid #9be5ff}
+.level-btn small{display:block;font-size:10px;color:#c3dfef;margin-top:3px}
+.level-btn .stars{color:#ffd45c;font-size:11px}
+.back{display:inline-block;color:#8bcfff;text-decoration:none;margin-top:22px}
+.tip{color:#9bb9ce;font-size:14px}
+#notice{min-height:22px;color:#ffe28a;font-weight:bold}
+@media(max-width:480px){.stat{min-width:88px;padding:8px 12px}.level-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.objective{min-width:82px;padding:7px}.objective .fruit{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🍉 FRUIT SLASH 100</h1>
+  <p class="subtitle">100 màn thử thách – chọn màn tùy thích và chinh phục!</p>
+  <div class="stats">
+    <div class="stat">Màn chơi<strong id="levelText">Chưa chọn</strong></div>
+    <div class="stat">Điểm<strong id="score">0</strong></div>
+    <div class="stat">Thời gian<strong id="time">60</strong></div>
+    <div class="stat">Mạng<strong id="lives">❤️❤️❤️❤️❤️</strong></div>
+  </div>
+  <section id="missionPanel">
+    <div class="mission-head"><div id="missionTitle">🎯 NHIỆM VỤ MÀN CHƠI</div><div id="missionHint">Chọn một màn để xem thử thách</div></div>
+    <div id="objectives"><div class="objective">🍋<strong>Chọn màn để bắt đầu</strong></div></div>
+  </section>
+  <div id="gameArea">
+    <canvas id="gameCanvas"></canvas>
+    <div id="overlay">
+      <h2>🍉 Sẵn sàng chinh phục?</h2>
+      <p>Chọn bất kỳ màn nào trong 100 màn.</p>
+      <div class="actions"><button id="chooseBtn">CHỌN MÀN CHƠI</button><button id="quickBtn" class="secondary">CHƠI MÀN ĐÃ CHỌN</button></div>
+      <p id="overlayInfo">Mỗi màn có nhiệm vụ trái cây riêng và 5 mạng.</p>
+    </div>
+  </div>
+  <p id="notice"></p>
+  <p class="tip">Chém đúng loại quả và đủ số lượng trước khi hết giờ · Tránh bom!</p>
+  <div class="actions"><button id="mapBtn" class="secondary">🗺 BẢN ĐỒ 100 MÀN</button></div>
+  <a class="back" href="game-center.html">← Quay lại thư viện trò chơi</a>
+</div>
+<script>
+const canvas=document.getElementById("gameCanvas"),ctx=canvas.getContext("2d");
+const area=document.getElementById("gameArea");
+const scoreText=document.getElementById("score"),timeText=document.getElementById("time");
+const livesText=document.getElementById("lives"),levelText=document.getElementById("levelText");
+const overlay=document.getElementById("overlay"),objectivesEl=document.getElementById("objectives");
+const missionTitle=document.getElementById("missionTitle"),missionHint=document.getElementById("missionHint");
+const notice=document.getElementById("notice");
+const FRUITS=[
+ {emoji:"🍋",name:"Chanh"},{emoji:"🍎",name:"Táo"},{emoji:"🍊",name:"Cam"},{emoji:"🍉",name:"Dưa hấu"},
+ {emoji:"🍓",name:"Dâu"},{emoji:"🍇",name:"Nho"},{emoji:"🥝",name:"Kiwi"},{emoji:"🍍",name:"Dứa"}
+];
+const STORAGE_KEY="vinhMediaFruitSlash100_v1";
+let progress={};try{progress=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")||{};}catch(e){progress={};}
+let objects=[],particles=[],bladeTrail=[],slashEffects=[];
+let score=0,lives=5,seconds=60,running=false,lastTime=0,spawnTimer=0;
+let gameTimer=null,animationId=null,pointerDown=false,lastPointer=null;
+let selectedLevel=1,currentMission=null,fruitAudio=null;
+
+function makeMissions(){
+ const missions=[];
+ for(let level=1;level<=100;level++){
+  const tier=level<=20?1:level<=40?2:level<=60?3:level<=80?4:5;
+  const typeCount=tier===1?1:tier===2?2:tier===3?2+(level%2):tier===4?3+(level%2):3+(level%3);
+  const used=[];
+  for(let j=0;j<typeCount;j++){const index=(level*3+j*5+Math.floor(level/7))%FRUITS.length;if(!used.includes(index))used.push(index);}
+  while(used.length<typeCount)used.push((used[used.length-1]+1)%FRUITS.length);
+  const base=tier===1?5+Math.floor(level/5):tier===2?7+Math.floor(level/8):tier===3?9+Math.floor(level/10):tier===4?11+Math.floor(level/12):13+Math.floor(level/15);
+  const targets=used.map((fruitIndex,j)=>({fruitIndex,amount:base+((level*2+j*3)%6)+(tier>=4?2:0),done:0}));
+  missions.push({level,tier,targets,time:tier===1?65:tier===2?58:tier===3?50:tier===4?43:38,
+   bombChance:tier===1?.08:tier===2?.12:tier===3?.16:tier===4?.20:.24,
+   spawnEvery:tier===1?34:tier===2?30:tier===3?26:tier===4?23:20});
+ }
+ missions[99]={level:100,tier:5,targets:[
+  {fruitIndex:0,amount:25,done:0},{fruitIndex:1,amount:25,done:0},
+  {fruitIndex:3,amount:20,done:0},{fruitIndex:4,amount:20,done:0}
+ ],time:45,bombChance:.27,spawnEvery:17};
+ return missions;
+}
+const MISSIONS=makeMissions();
+function saveProgress(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));}catch(e){}}
+function tierName(t){return ["","Dễ","Trung bình","Khó","Siêu khó","Huyền thoại"][t];}
+function getMission(level){return MISSIONS[level-1];}
+function renderMission(mission){
+ currentMission=mission;missionTitle.textContent=`🎯 MÀN ${mission.level} · ${tierName(mission.tier).toUpperCase()}`;
+ missionHint.textContent=`Chém đủ từng loại quả trong ${mission.time} giây`;objectivesEl.innerHTML="";
+ mission.targets.forEach((target,index)=>{
+  const fruit=FRUITS[target.fruitIndex],item=document.createElement("div");
+  item.className="objective";item.id=`objective-${index}`;
+  item.innerHTML=`<div class="fruit">${fruit.emoji}</div><strong id="count-${index}">0 / ${target.amount}</strong><small>${fruit.name}</small>`;
+  objectivesEl.appendChild(item);
+ });
+}
+function updateObjectives(){
+ if(!currentMission)return;
+ currentMission.targets.forEach((target,index)=>{
+  const countEl=document.getElementById(`count-${index}`),item=document.getElementById(`objective-${index}`);
+  if(countEl)countEl.textContent=`${target.done} / ${target.amount}`;
+  if(item)item.classList.toggle("done",target.done>=target.amount);
+ });
+}
+function updateStats(){
+ scoreText.textContent=score;timeText.textContent=seconds;
+ livesText.textContent="❤️".repeat(lives)+"🖤".repeat(5-lives);
+ levelText.textContent=currentMission?currentMission.level:"Chưa chọn";
+}
+function resizeCanvas(){
+ const rect=area.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize",resizeCanvas);resizeCanvas();
+function playFruitSound(type){
+ try{
+  fruitAudio=fruitAudio||(new(window.AudioContext||window.webkitAudioContext)());
+  if(fruitAudio.state==="suspended")fruitAudio.resume();
+  const osc=fruitAudio.createOscillator(),gain=fruitAudio.createGain(),now=fruitAudio.currentTime;
+  osc.connect(gain);gain.connect(fruitAudio.destination);
+  if(type==="fruit"){osc.type="sawtooth";osc.frequency.setValueAtTime(750,now);osc.frequency.exponentialRampToValueAtTime(180,now+.13);}
+  else{osc.type="square";osc.frequency.setValueAtTime(130,now);osc.frequency.exponentialRampToValueAtTime(55,now+.3);}
+  gain.gain.setValueAtTime(.001,now);gain.gain.exponentialRampToValueAtTime(.16,now+.02);
+  gain.gain.exponentialRampToValueAtTime(.001,now+.3);osc.start(now);osc.stop(now+.31);
+ }catch(error){console.log(error);}
+}
+function createParticles(x,y){
+ for(let i=0;i<12;i++)particles.push({x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*7,life:30,size:3+Math.random()*5});
+}
+function createSlash(x1,y1,x2,y2){bladeTrail.push({x1,y1,x2,y2,life:12});slashEffects.push({x:x2,y:y2,life:15});}
+function drawBlade(){
+ bladeTrail.forEach(line=>{
+  const alpha=line.life/12;ctx.save();ctx.globalAlpha=alpha;ctx.lineCap="round";ctx.lineWidth=5+alpha*5;
+  ctx.shadowBlur=22;ctx.shadowColor="#71eaff";ctx.strokeStyle="#fff";
+  ctx.beginPath();ctx.moveTo(line.x1,line.y1);ctx.lineTo(line.x2,line.y2);ctx.stroke();ctx.restore();line.life--;
+ });
+ bladeTrail=bladeTrail.filter(line=>line.life>0);
+ slashEffects.forEach(effect=>{
+  ctx.save();ctx.globalAlpha=effect.life/15;ctx.strokeStyle="#75ddff";ctx.lineWidth=3;
+  ctx.shadowBlur=15;ctx.shadowColor="#75ddff";ctx.beginPath();ctx.arc(effect.x,effect.y,25-effect.life,0,Math.PI*2);
+  ctx.stroke();ctx.restore();effect.life--;
+ });
+ slashEffects=slashEffects.filter(effect=>effect.life>0);
+}
+function spawnObject(){
+ if(!currentMission)return;
+ const w=area.clientWidth,isBomb=Math.random()<currentMission.bombChance;
+ let fruitIndex;
+ if(Math.random()<.82){
+  const available=currentMission.targets.filter(t=>t.done<t.amount);
+  fruitIndex=available.length?available[Math.floor(Math.random()*available.length)].fruitIndex:Math.floor(Math.random()*FRUITS.length);
+ }else fruitIndex=Math.floor(Math.random()*FRUITS.length);
+ objects.push({x:55+Math.random()*Math.max(20,w-110),y:area.clientHeight+25,
+  vx:(Math.random()-.5)*(1.8+currentMission.tier*.25),vy:-(9+Math.random()*3+currentMission.tier*.35),
+  gravity:.13,size:62+Math.random()*8,emoji:isBomb?"💣":FRUITS[fruitIndex].emoji,bomb:isBomb,fruitIndex,hit:false});
+}
+function startGame(level=selectedLevel){
+ selectedLevel=Math.max(1,Math.min(100,Number(level)||1));currentMission=getMission(selectedLevel);
+ currentMission.targets.forEach(t=>t.done=0);
+ objects=[];particles=[];bladeTrail=[];slashEffects=[];score=0;lives=5;seconds=currentMission.time;
+ running=true;lastTime=0;spawnTimer=0;pointerDown=false;lastPointer=null;
+ clearInterval(gameTimer);cancelAnimationFrame(animationId);
+ renderMission(currentMission);updateObjectives();updateStats();notice.textContent="";overlay.style.display="none";
+ gameTimer=setInterval(()=>{
+  if(!running)return;seconds--;updateStats();
+  if(seconds<=0){seconds=0;updateStats();endGame("Hết thời gian!");}
+ },1000);
+ animationId=requestAnimationFrame(loop);
+}
+function missionComplete(){return currentMission.targets.every(t=>t.done>=t.amount);}
+function completeMission(){
+ if(!running)return;running=false;clearInterval(gameTimer);cancelAnimationFrame(animationId);
+ const old=progress[selectedLevel]||{stars:0,best:0};
+ const stars=seconds>=currentMission.time*.5?3:seconds>=currentMission.time*.2?2:1;
+ progress[selectedLevel]={stars:Math.max(old.stars||0,stars),best:Math.max(old.best||0,score)};saveProgress();
+ showResult(true,`🏆 Hoàn thành màn ${selectedLevel}!`,stars);
+}
+function endGame(reason){
+ if(!running)return;running=false;clearInterval(gameTimer);cancelAnimationFrame(animationId);showResult(false,reason,0);
+}
+function showResult(won,reason,stars){
+ overlay.style.display="flex";
+ overlay.innerHTML=`<h2>${reason}</h2><p>Điểm: <strong>${score}</strong> · Thời gian còn: ${seconds}s</p>
+ ${won?`<p style="font-size:25px;color:#ffd45c">${"⭐".repeat(stars)}</p><p>Thành tích đã được lưu trên thiết bị này.</p>`:`<p>Hãy thử lại để hoàn thành đủ nhiệm vụ nhé!</p>`}
+ <div class="actions"><button id="retryBtn">CHƠI LẠI MÀN ${selectedLevel}</button><button id="resultMapBtn" class="secondary">CHỌN MÀN KHÁC</button>
+ ${won&&selectedLevel<100?`<button id="nextBtn">MÀN TIẾP THEO →</button>`:""}</div>`;
+ document.getElementById("retryBtn").onclick=()=>startGame(selectedLevel);
+ document.getElementById("resultMapBtn").onclick=showLevelMap;
+ const next=document.getElementById("nextBtn");if(next)next.onclick=()=>startGame(selectedLevel+1);
+}
+function showHome(){
+ running=false;clearInterval(gameTimer);cancelAnimationFrame(animationId);overlay.style.display="flex";
+ overlay.innerHTML=`<h2>🍉 Sẵn sàng chinh phục?</h2><p>Chọn bất kỳ màn nào trong 100 màn.</p>
+ <div class="actions"><button id="homeChoose">CHỌN MÀN CHƠI</button><button id="homePlay" class="secondary">CHƠI MÀN ${selectedLevel}</button></div>
+ <p>Đang chọn màn ${selectedLevel} · Mỗi màn có nhiệm vụ riêng · 5 mạng</p>`;
+ document.getElementById("homeChoose").onclick=showLevelMap;
+ document.getElementById("homePlay").onclick=()=>startGame(selectedLevel);
+}
+function showLevelMap(){
+ running=false;clearInterval(gameTimer);cancelAnimationFrame(animationId);overlay.style.display="flex";
+ const buttons=Array.from({length:100},(_,i)=>{
+  const level=i+1,record=progress[level],stars=record?.stars||0,active=level===selectedLevel?"selected":"";
+  return `<button class="level-btn ${active}" data-level="${level}">MÀN ${level}<small>${tierName(getMission(level).tier)}</small><span class="stars">${"★".repeat(stars)}${"☆".repeat(3-stars)}</span></button>`;
+ }).join("");
+ overlay.innerHTML=`<h2>🗺 CHỌN MÀN CHƠI</h2><p>Được tự do chọn cả 100 màn – không cần mở khóa tuần tự.</p>
+ <div class="level-grid">${buttons}</div><p id="selectedInfo">Đang chọn màn ${selectedLevel}</p>
+ <div class="actions"><button id="mapPlay">CHƠI MÀN ĐÃ CHỌN</button><button id="mapClose" class="secondary">QUAY LẠI</button></div>`;
+ overlay.querySelectorAll(".level-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  selectedLevel=Number(btn.dataset.level);overlay.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");document.getElementById("selectedInfo").textContent=`Đang chọn màn ${selectedLevel} · ${tierName(getMission(selectedLevel).tier)}`;
+  renderMission(getMission(selectedLevel));updateStats();
+ }));
+ document.getElementById("mapPlay").onclick=()=>startGame(selectedLevel);
+ document.getElementById("mapClose").onclick=showHome;
+}
+function sliceAt(x,y){
+ if(!running)return;
+ objects.forEach(obj=>{
+  if(obj.hit)return;
+  if(Math.hypot(obj.x-x,obj.y-y)<obj.size*.9){
+   obj.hit=true;createParticles(obj.x,obj.y);
+   if(obj.bomb){playFruitSound("bomb");lives--;updateStats();if(lives<=0)endGame("Bạn đã hết 5 mạng!");}
+   else{
+    playFruitSound("fruit");score+=10;
+    const target=currentMission.targets.find(t=>t.fruitIndex===obj.fruitIndex);
+    if(target&&target.done<target.amount){target.done++;updateObjectives();notice.textContent=`Đúng rồi! ${FRUITS[obj.fruitIndex].name}: ${target.done}/${target.amount}`;}
+    else notice.textContent="Đã chém quả này nhưng không thuộc mục tiêu màn chơi.";
+    updateStats();if(missionComplete())completeMission();
+   }
+  }
+ });
+}
+function getPosition(event){const rect=canvas.getBoundingClientRect();return{x:event.clientX-rect.left,y:event.clientY-rect.top};}
+function loop(timestamp){
+ if(!running)return;
+ const dt=Math.min((timestamp-lastTime)/16.67||1,2);lastTime=timestamp;
+ const w=area.clientWidth,h=area.clientHeight;ctx.clearRect(0,0,w,h);ctx.fillStyle="#fff";
+ for(let i=0;i<18;i++){ctx.globalAlpha=.15;ctx.fillRect((i*79)%w,(i*47)%h,2,2);}ctx.globalAlpha=1;
+ spawnTimer+=dt;if(spawnTimer>currentMission.spawnEvery){spawnObject();spawnTimer=0;}
+ objects.forEach(obj=>{
+  if(obj.hit)return;obj.x+=obj.vx*dt;obj.y+=obj.vy*dt;obj.vy+=obj.gravity*dt;
+  ctx.save();ctx.font=`bold ${obj.size}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;
+  ctx.textAlign="center";ctx.textBaseline="middle";ctx.shadowColor=obj.bomb?"#ff3333":"#55ddff";ctx.shadowBlur=18;
+  ctx.fillText(obj.emoji,obj.x,obj.y);ctx.restore();
+ });
+ objects=objects.filter(obj=>obj.y<h+90&&!obj.hit);
+ particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;ctx.globalAlpha=Math.max(0,p.life/30);
+  ctx.fillStyle="#70d5ff";ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
+ ctx.globalAlpha=1;particles=particles.filter(p=>p.life>0);drawBlade();animationId=requestAnimationFrame(loop);
+}
+canvas.addEventListener("pointerdown",event=>{if(!running)return;pointerDown=true;lastPointer=getPosition(event);sliceAt(lastPointer.x,lastPointer.y);});
+canvas.addEventListener("pointermove",event=>{
+ if(!pointerDown||!running)return;const current=getPosition(event);
+ const distance=Math.hypot(current.x-lastPointer.x,current.y-lastPointer.y),steps=Math.max(1,Math.ceil(distance/8));
+ for(let i=1;i<=steps;i++){
+  const x=lastPointer.x+(current.x-lastPointer.x)*i/steps,y=lastPointer.y+(current.y-lastPointer.y)*i/steps;
+  createSlash(lastPointer.x+(current.x-lastPointer.x)*(i-1)/steps,lastPointer.y+(current.y-lastPointer.y)*(i-1)/steps,x,y);sliceAt(x,y);
+ }
+ lastPointer=current;
+});
+window.addEventListener("pointerup",()=>pointerDown=false);
+window.addEventListener("pointercancel",()=>pointerDown=false);
+document.getElementById("chooseBtn").onclick=showLevelMap;
+document.getElementById("quickBtn").onclick=()=>startGame(selectedLevel);
+document.getElementById("mapBtn").onclick=showLevelMap;
+updateStats();
+</script>
+</body>
+</html>
