@@ -2237,8 +2237,44 @@ function renderAdminSongList() {
       songAdminForm.scrollIntoView({ behavior: "smooth" });
     });
 
-    item.append(info, editButton);
-    adminSongList.appendChild(item);
+// NÚT XÓA BÀI HÁT
+const deleteButton = document.createElement("button");
+deleteButton.type = "button";
+deleteButton.textContent = "🗑️ XÓA";
+
+deleteButton.style.cssText =
+  "padding:10px 18px;background:#e53935;" +
+  "color:white;border:0;border-radius:8px;" +
+  "cursor:pointer;font-weight:bold;";
+
+deleteButton.addEventListener("click", async () => {
+  const confirmDelete = confirm(
+    `Bạn có chắc muốn xóa bài "${song.title}" không?`
+  );
+
+  if (!confirmDelete) return;
+
+  const { error } = await supabase
+    .from("songs")
+    .delete()
+    .eq("id", song.id);
+
+  if (error) {
+    alert("Xóa thất bại: " + error.message);
+    return;
+  }
+
+  alert("Đã xóa bài hát thành công!");
+  await loadSongsFromSupabase();
+});
+
+// Hiển thị hai nút SỬA và XÓA
+const actions = document.createElement("div");
+actions.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;";
+
+actions.append(editButton, deleteButton);
+item.append(info, actions);
+adminSongList.appendChild(item);
   });
 }
 
