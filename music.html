@@ -78,6 +78,104 @@
       border-color: var(--text);
     }
 
+    /* Nhóm nút góc trên bên phải */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Nút quản trị */
+.admin-btn {
+  color: #071b0e;
+  background: #1ed760;
+  border: 1px solid #1ed760;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.admin-btn:hover {
+  background: #ffffff;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+}
+
+
+/* CỬA SỔ ĐĂNG NHẬP ADMIN */
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, .85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-box {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 25px;
+  border: 1px solid #1ed760;
+  border-radius: 20px;
+  background: #181818;
+  color: white;
+  box-shadow: 0 0 35px rgba(30, 215, 96, .18);
+}
+
+.admin-box h2 {
+  margin-top: 5px;
+  color: #1ed760;
+  text-align: center;
+}
+
+.admin-box p {
+  color: #aaa;
+  text-align: center;
+}
+
+.admin-box input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #252525;
+  color: white;
+  outline: none;
+}
+
+.admin-box form button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #1ed760;
+  color: #071b0e;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.admin-close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  border: 0;
+  background: none;
+  color: white;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+
+
+
     /* =====================================================
        3. PHẦN GIỚI THIỆU ĐẦU TRANG
        Sửa tiêu đề và lời giới thiệu trong HTML bên dưới.
@@ -519,10 +617,114 @@
        Nếu file hồ sơ chính không tên index.html,
        hãy sửa href bên dưới thành tên file chính xác.
   ====================================================== -->
-  <header class="topbar">
-    <div class="brand">♫ <span>Thành Vinh Music</span> 💖</div>
-    <a class="back-link" href="index.html">← Quay lại hồ sơ</a>
-  </header>
+ 
+<header class="topbar">
+  <div class="brand">♫ <span>Thành Vinh Music</span> 💖</div>
+
+  <div class="topbar-actions">
+    <button class="admin-btn" id="adminLoginBtn" type="button">
+      ⚙ QUẢN TRỊ
+    </button>
+
+    <a class="back-link" href="index.html">
+      ← Quay lại hồ sơ
+    </a>
+  </div>
+</header>
+
+
+
+<!-- KHUNG ĐĂNG NHẬP ADMIN -->
+<div class="admin-modal" id="adminModal" style="display:none;">
+  <div class="admin-box">
+    <button type="button" class="admin-close" id="adminClose">✕</button>
+
+    <h2>♫ Quản trị âm nhạc</h2>
+    <p>Đăng nhập để quản lý thư viện nhạc</p>
+
+    <form id="adminLoginForm">
+      <input
+        type="email"
+        id="adminEmail"
+        placeholder="Email quản trị"
+        required
+      >
+
+      <input
+        type="password"
+        id="adminPassword"
+        placeholder="Mật khẩu"
+        required
+      >
+
+      <button type="submit" id="adminSubmit">
+        ĐĂNG NHẬP
+      </button>
+    </form>
+
+    <p id="adminMessage" aria-live="polite"></p>
+  </div>
+</div>
+
+
+
+
+
+<!-- BẢNG ĐIỀU KHIỂN QUẢN TRỊ NHẠC -->
+<section id="adminPanel" class="admin-panel" style="display:none;">
+
+  <div class="admin-dashboard">
+    <div class="admin-heading">
+      <div>
+        <h2>♫ QUẢN LÝ THƯ VIỆN NHẠC</h2>
+        <p>Thêm và quản lý bài hát của bạn</p>
+      </div>
+
+      <button id="adminLogoutBtn" type="button">
+        ĐĂNG XUẤT
+      </button>
+    </div>
+
+    <form id="songAdminForm">
+      <input type="hidden" id="editSongId">
+
+      <label>Tên bài hát</label>
+      <input id="newSongTitle" type="text"
+        placeholder="Nhập tên bài hát" required>
+
+      <label>Tên ca sĩ</label>
+      <input id="newSongArtist" type="text"
+        placeholder="Nhập tên ca sĩ">
+
+      <label>Link MP3</label>
+      <input id="newSongAudio" type="url"
+        placeholder="Dán link MP3 trực tiếp" required>
+
+      <label>Link ảnh bìa</label>
+      <input id="newSongCover" type="url"
+        placeholder="Dán link ảnh bìa">
+
+      <button type="submit" id="saveSongBtn">
+        + THÊM BÀI HÁT
+      </button>
+
+      <button type="button" id="cancelEditBtn"
+        style="display:none;">
+        HỦY CHỈNH SỬA
+      </button>
+    </form>
+
+    <p id="songAdminMessage" aria-live="polite"></p>
+
+    <h3>Danh sách bài hát quản lý</h3>
+    <div id="adminSongList"></div>
+  </div>
+
+</section>
+
+
+
+
 
   <!-- =====================================================
        8. TIÊU ĐỀ TRANG NHẠC
@@ -611,6 +813,11 @@
   <!-- Chỉ tạo một audio player duy nhất cho toàn trang -->
   <audio id="audioPlayer" preload="none"></audio>
 
+  
+<!-- Thư viện kết nối Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
   <script>
     /* =====================================================
        11. DANH SÁCH BÀI HÁT - BẠN CHỈ SỬA Ở ĐÂY
@@ -628,7 +835,27 @@
        đặt dấu phẩy giữa các khối.
     ====================================================== */
 
-    const SONGS = [
+
+
+/* =====================================================
+   KẾT NỐI SUPABASE
+===================================================== */
+
+// Địa chỉ dự án Supabase của bạn
+const SUPABASE_URL = "https://ndkmukhhlxbubkuffhbz.supabase.co";
+
+// Thay bằng Publishable key lấy từ Supabase
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_OfKpBPZ7TD1KZvOJa1ix1A_PwhDxVVa";
+
+// Khởi tạo kết nối
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+
+    let SONGS = [
       {
         title: "LIST NHẠC 1 Giờ  ",
         artist: "20 Nhạc Hot TikTok",
@@ -1554,7 +1781,129 @@ clearSongSearch.addEventListener("click", () => {
        Không tự phát nhạc khi vừa mở trang.
        Người nghe chủ động chọn bài hoặc nhấn Play.
     ====================================================== */
+   
+/* =====================================================
+   22. TẢI DANH SÁCH NHẠC TỪ SUPABASE
+===================================================== */
+
+async function loadSongsFromSupabase() {
+  status.textContent = "Đang tải danh sách nhạc...";
+
+  const { data, error } = await supabaseClient
+    .from("songs")
+    .select("id, title, artist, audio_url, cover_url")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Lỗi tải nhạc:", error);
+    status.textContent = "Không tải được nhạc từ Supabase. Đang dùng danh sách cũ.";
     renderSongs();
+    return;
+  }
+
+  if (data && data.length > 0) {
+    SONGS = data.map(song => ({
+      id: song.id,
+      title: song.title,
+      artist: song.artist || "Chưa cập nhật ca sĩ",
+      audio: song.audio_url,
+      cover: song.cover_url || ""
+    }));
+  }
+
+  renderSongs();
+
+  status.textContent = data && data.length > 0
+    ? "Đã tải nhạc từ Supabase thành công."
+    : "Supabase chưa có nhạc. Đang hiển thị danh sách cũ.";
+}
+
+
+
+/* =====================================================
+   23. ĐIỀU KHIỂN ĐĂNG NHẬP ADMIN
+===================================================== */
+
+const adminModal = document.getElementById("adminModal");
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+const adminClose = document.getElementById("adminClose");
+const adminLoginForm = document.getElementById("adminLoginForm");
+const adminMessage = document.getElementById("adminMessage");
+
+// Bấm nút QUẢN TRỊ để mở cửa sổ
+adminLoginBtn.addEventListener("click", () => {
+  adminModal.style.display = "flex";
+  adminMessage.textContent = "";
+});
+
+// Bấm dấu X để đóng cửa sổ
+adminClose.addEventListener("click", () => {
+  adminModal.style.display = "none";
+});
+
+// Bấm ra ngoài cửa sổ để đóng
+adminModal.addEventListener("click", (event) => {
+  if (event.target === adminModal) {
+    adminModal.style.display = "none";
+  }
+});
+
+// Xử lý đăng nhập bằng Supabase
+adminLoginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("adminEmail").value.trim();
+  const password = document.getElementById("adminPassword").value;
+
+  const submitButton = document.getElementById("adminSubmit");
+
+  submitButton.disabled = true;
+  submitButton.textContent = "ĐANG KIỂM TRA...";
+  adminMessage.textContent = "";
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  submitButton.disabled = false;
+  submitButton.textContent = "ĐĂNG NHẬP";
+
+  if (error) {
+    adminMessage.textContent = "Đăng nhập thất bại. Hãy kiểm tra email và mật khẩu.";
+    adminMessage.style.color = "#ff5555";
+    console.error("Lỗi đăng nhập:", error);
+    return;
+  }
+
+ if (data.user) {
+  // Chỉ cho phép đúng tài khoản Admin
+  if (data.user.id !== "103b821e-b685-46ac-93ec-9e501e2bf331") {
+    adminMessage.textContent = "Tài khoản không có quyền quản trị!";
+    await supabaseClient.auth.signOut();
+    return;
+  }
+
+  adminMessage.textContent = "Đăng nhập thành công!";
+  adminLoginBtn.textContent = "✓ ĐÃ ĐĂNG NHẬP";
+
+  // Đóng cửa sổ đăng nhập
+  adminModal.style.display = "none";
+
+  // Hiện bảng quản trị
+  document.getElementById("adminPanel").style.display = "block";
+
+  // Tải danh sách bài hát
+  await loadSongsFromSupabase();
+
+  // Cuộn đến bảng quản trị
+  document.getElementById("adminPanel").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+loadSongsFromSupabase();
+
   </script>
 </body>
 </html>
