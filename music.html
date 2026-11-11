@@ -2161,10 +2161,6 @@ const songAdminMessage = document.getElementById("songAdminMessage");
 const adminSongList = document.getElementById("adminSongList");
 const saveSongBtn = document.getElementById("saveSongBtn");
 
-// HIỂN THỊ DANH SÁCH BÀI HÁT VÀ NÚT SỬA
-function renderAdminSongList() {
-  adminSongList.innerHTML = "";
-
 
 // CHUYỂN TIẾNG VIỆT CÓ DẤU THÀNH KHÔNG DẤU
 function normalizeSearch(text) {
@@ -2181,9 +2177,7 @@ function normalizeSearch(text) {
 function renderAdminSongList() {
   adminSongList.innerHTML = "";
 
-  const keyword = normalizeSearch(
-    document.getElementById("adminSongSearch").value
-  );
+  const keyword = normalizeSearch(adminSongSearch.value);
 
   const databaseSongs = SONGS.filter(song => {
     if (!song.id) return false;
@@ -2196,7 +2190,8 @@ function renderAdminSongList() {
   });
 
   if (databaseSongs.length === 0) {
-    adminSongList.textContent = "Không tìm thấy bài hát phù hợp.";
+    adminSongList.textContent =
+      "Không tìm thấy bài hát phù hợp.";
     return;
   }
 
@@ -2204,9 +2199,10 @@ function renderAdminSongList() {
     const item = document.createElement("div");
 
     item.style.cssText =
-      "display:flex;justify-content:space-between;align-items:center;" +
-      "gap:12px;padding:14px;margin-bottom:10px;" +
-      "background:#202c2a;border-radius:10px;flex-wrap:wrap;";
+      "display:flex;justify-content:space-between;" +
+      "align-items:center;gap:12px;padding:14px;" +
+      "margin-bottom:10px;background:#202c2a;" +
+      "border-radius:10px;flex-wrap:wrap;";
 
     const info = document.createElement("div");
 
@@ -2224,8 +2220,9 @@ function renderAdminSongList() {
     editButton.textContent = "✏️ SỬA";
 
     editButton.style.cssText =
-      "padding:10px 18px;background:#1ed760;color:#071b0e;" +
-      "border:0;border-radius:8px;cursor:pointer;font-weight:bold;";
+      "padding:10px 18px;background:#1ed760;" +
+      "color:#071b0e;border:0;border-radius:8px;" +
+      "cursor:pointer;font-weight:bold;";
 
     editButton.addEventListener("click", () => {
       document.getElementById("editSongId").value = song.id;
@@ -2258,6 +2255,10 @@ toggleAdminSongsBtn.addEventListener("click", () => {
   toggleAdminSongsBtn.textContent = isHidden
     ? "✕ ĐÓNG DANH SÁCH BÀI HÁT"
     : "☰ DANH SÁCH BÀI HÁT";
+
+  if (isHidden) {
+    renderAdminSongList();
+  }
 });
 
 // TÌM KIẾM NGAY KHI GÕ
@@ -2265,58 +2266,11 @@ adminSongSearch.addEventListener("input", () => {
   renderAdminSongList();
 });
 
-  if (databaseSongs.length === 0) {
-    adminSongList.textContent = "Chưa có bài hát trên Supabase.";
-    return;
-  }
-
-  databaseSongs.forEach(song => {
-    const item = document.createElement("div");
-
-    item.style.cssText =
-      "display:flex;justify-content:space-between;align-items:center;" +
-      "padding:14px;margin-bottom:10px;background:#202c2a;" +
-      "border-radius:10px;gap:12px;";
-
-    const info = document.createElement("div");
-
-    const title = document.createElement("strong");
-    title.textContent = song.title;
-
-    const artist = document.createElement("p");
-    artist.textContent = song.artist || "Chưa có ca sĩ";
-    artist.style.color = "#aaa";
-
-    info.append(title, artist);
-
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.textContent = "✏️ SỬA";
-
-    editButton.style.cssText =
-      "padding:10px 18px;background:#1ed760;color:#071b0e;" +
-      "border:0;border-radius:8px;cursor:pointer;font-weight:bold;";
-
-    editButton.addEventListener("click", () => {
-      document.getElementById("editSongId").value = song.id;
-      document.getElementById("newSongTitle").value = song.title;
-      document.getElementById("newSongArtist").value = song.artist || "";
-      document.getElementById("newSongAudio").value = song.audio || "";
-      document.getElementById("newSongCover").value = song.cover || "";
-
-      saveSongBtn.textContent = "LƯU THAY ĐỔI";
-      document.getElementById("cancelEditBtn").style.display = "inline-block";
-
-      songAdminForm.scrollIntoView({ behavior: "smooth" });
-    });
-
-    item.append(info, editButton);
-    adminSongList.appendChild(item);
-  });
-}
 
 
-// Xử lý thêm bài hát mới
+
+
+//Xử lí thêm bài mới
 songAdminForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 const editId = document.getElementById("editSongId").value;
