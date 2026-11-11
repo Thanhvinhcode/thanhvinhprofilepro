@@ -87,12 +87,17 @@
 
 /* Nút quản trị */
 .admin-btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #071b0e;
-  background: #1ed760;
-  border: 1px solid #1ed760;
-  border-radius: 999px;
-  padding: 9px 16px;
-  font-weight: bold;
+  background: #4ad8eb;
+  border: 1px solid #2bd1ee;
+  border-radius: 50%;
+  font-size: 22px;
   cursor: pointer;
   transition: .2s ease;
 }
@@ -780,9 +785,7 @@
   <div class="brand">♫ <span>Thành Vinh Music</span> 💖</div>
 
   <div class="topbar-actions">
-    <button class="admin-btn" id="adminLoginBtn" type="button">
-      ⚙ QUẢN TRỊ
-    </button>
+   <button class="admin-btn" id="adminLoginBtn" type="button" title="Quản trị">⚙</button>
 
     <a class="back-link" href="index.html">
       ← Quay lại hồ sơ
@@ -1959,15 +1962,15 @@ async function loadSongsFromSupabase() {
     return;
   }
 
-  if (data && data.length > 0) {
-    SONGS = data.map(song => ({
-      id: song.id,
-      title: song.title,
-      artist: song.artist || "Chưa cập nhật ca sĩ",
-      audio: song.audio_url,
-      cover: song.cover_url || ""
-    }));
-  }
+const databaseSongs = (data || []).map(song => ({
+  id: song.id,
+  title: song.title,
+  artist: song.artist || "Chưa cập nhật ca sĩ",
+  audio: song.audio_url,
+  cover: song.cover_url || ""
+}));
+
+mergeMusicLists(databaseSongs);
 
   renderSongs();
 
@@ -2065,12 +2068,87 @@ adminLoginForm.addEventListener("submit", async (event) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
+// Lấy lại danh sách nhạc cũ để không bị mất khi tải Supabase
+const LOCAL_SONGS = [...SONGS];
+
+// Lấy các thành phần quản lý bài hát
+const songAdminForm = document.getElementById("songAdminForm");
+const songAdminMessage = document.getElementById("songAdminMessage");
+const adminSongList = document.getElementById("adminSongList");
+const saveSongBtn = document.getElementById("saveSongBtn");
+
+// Xử lý thêm bài hát mới
+songAdminForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const title = document.getElementById("newSongTitle").value.trim();
+  const artist = document.getElementById("newSongArtist").value.trim();
+  const audioUrl = document.getElementById("newSongAudio").value.trim();
+  const coverUrl = document.getElementById("newSongCover").value.trim();
+
+  saveSongBtn.disabled = true;
+  saveSongBtn.textContent = "ĐANG LƯU...";
+
+  const { error } = await supabaseClient
+    .from("songs")
+    .insert([{
+      title: title,
+      artist: artist,
+      audio_url: audioUrl,
+      cover_url: coverUrl
+    }]);
+
+  saveSongBtn.disabled = false;
+  saveSongBtn.textContent = "+ THÊM BÀI HÁT";
+
+  if (error) {
+    console.error("Lỗi thêm bài hát:", error);
+    songAdminMessage.textContent = "Không thêm được bài hát: " + error.message;
+    songAdminMessage.style.color = "#ff5555";
+    return;
+  }
+
+  songAdminMessage.textContent = "Đã thêm bài hát thành công!";
+  songAdminMessage.style.color = "#1ed760";
+
+  songAdminForm.reset();
+
+  // Tải lại danh sách nhạc
+  await loadSongsFromSupabase();
+});
+
+// Hiển thị danh sách nhạc từ Supabase nhưng vẫn giữ nhạc cũ
+function mergeMusicLists(databaseSongs) {
+  SONGS = [
+    ...databaseSongs,
+    ...LOCAL_SONGS.filter(localSong =>
+      !databaseSongs.some(dbSong =>
+        (dbSong.audio && localSong.audio === dbSong.audio) ||
+        (
+          dbSong.title.trim().toLowerCase() === localSong.title.trim().toLowerCase() &&
+          dbSong.artist.trim().toLowerCase() === localSong.artist.trim().toLowerCase()
+        )
+      )
+    )
+  ];
+
+  renderSongs();
+}
+
+
+
 // GIỮ NGUYÊN DÒNG NÀY Ở CUỐI
 loadSongsFromSupabase();
-
-
-
-
   </script>
 </body>
 </html>
