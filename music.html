@@ -672,8 +672,8 @@
 }
 
 #adminLogoutBtn {
-  background: #303f3d;
-  color: white;
+  background: #0f0f0f;
+  color: rgb(241, 227, 227);
 }
 
 #saveSongBtn {
@@ -845,7 +845,7 @@
   <div class="brand">♫ <span>Thành Vinh Music</span> 💖</div>
 
   <div class="topbar-actions">
-   <button class="admin-btn" id="adminLoginBtn" type="button" title="Quản trị">⚙</button>
+   <button class="admin-btn" id="adminLoginBtn" type="button" title="">⚙</button>
 
     <a class="back-link" href="index.html">
       ← Quay lại hồ sơ
@@ -2090,6 +2090,27 @@ adminModal.addEventListener("click", (event) => {
     adminModal.style.display = "none";
   }
 });
+
+
+// XỬ LÝ NÚT ĐĂNG XUẤT ADMIN
+document.getElementById("adminLogoutBtn").addEventListener("click", async () => {
+  const confirmLogout = confirm("Bạn có chắc muốn đăng xuất quản trị viên không?");
+
+  if (!confirmLogout) return;
+
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert("Đăng xuất thất bại: " + error.message);
+    return;
+  }
+
+  document.getElementById("adminPanel").style.display = "none";
+  adminModal.style.display = "none";
+  adminLoginBtn.textContent = "⚙";
+
+  alert("Bạn đã đăng xuất thành công!");
+});
 // Xử lý đăng nhập bằng Supabase
 adminLoginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -2142,7 +2163,41 @@ await loadSongsFromSupabase();
   }
 });
 
+// TỰ KHÔI PHỤC ĐĂNG NHẬP ADMIN KHI TẢI LẠI TRANG
+(async function restoreAdminSession() {
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
 
+    if (error) {
+      console.error("Không kiểm tra được phiên đăng nhập:", error);
+      return;
+    }
+
+    const session = data.session;
+
+    if (!session) return;
+
+    // Chỉ cho phép đúng tài khoản Admin
+    if (session.user.id !== "103b821e-b685-46ac-93ec-9e501e2bf331") {
+      await supabaseClient.auth.signOut();
+      return;
+    }
+
+    // Khôi phục giao diện Admin
+    adminLoginBtn.textContent = "✓";
+    adminModal.style.display = "none";
+
+    document.getElementById("adminPanel").style.display = "block";
+
+    // Tải lại danh sách bài hát
+    await loadSongsFromSupabase();
+
+    console.log("Đã khôi phục phiên Admin thành công!");
+
+  } catch (err) {
+    console.error("Lỗi khôi phục đăng nhập:", err);
+  }
+})();
 
 
 
@@ -2176,6 +2231,12 @@ function normalizeSearch(text) {
 // HIỂN THỊ VÀ TÌM KIẾM DANH SÁCH BÀI HÁT
 function renderAdminSongList() {
   adminSongList.innerHTML = "";
+  // KHUNG DANH SÁCH CUỘN - HIỂN THỊ 3 BÀI BAN ĐẦU
+adminSongList.style.maxHeight = "270px";
+adminSongList.style.overflowY = "auto";
+adminSongList.style.overflowX = "hidden";
+adminSongList.style.paddingRight = "8px";
+adminSongList.style.scrollBehavior = "smooth";
 
   const keyword = normalizeSearch(adminSongSearch.value);
 
@@ -2347,36 +2408,37 @@ if (editId) {
       cover_url: coverUrl
     }]);
 }
-
 const { error } = result;
-
-
-
-
-
-
-
-
-
-
-
-    
-
   saveSongBtn.disabled = false;
   saveSongBtn.textContent = "+ THÊM BÀI HÁT";
-
   if (error) {
     console.error("Lỗi thêm bài hát:", error);
     songAdminMessage.textContent = "Không thêm được bài hát: " + error.message;
     songAdminMessage.style.color = "#ff5555";
     return;
   }
-
 songAdminMessage.textContent = editId
   ? "Đã cập nhật bài hát thành công!"
   : "Đã thêm bài hát thành công!";
     songAdminMessage.style.color = "#1ed760";
+    // HIỂN THỊ THÔNG BÁO THÀNH CÔNG
+songAdminMessage.style.cssText =
+  "display:block;" +
+  "padding:12px 16px;" +
+  "margin:12px 0;" +
+  "background:rgba(30,215,96,0.15);" +
+  "border:1px solid #1ed760;" +
+  "border-radius:10px;" +
+  "color:#1ed760;" +
+  "font-weight:bold;" +
+  "font-size:15px;";
 
+// TỰ ẨN SAU 4 GIÂY
+clearTimeout(window.songMessageTimer);
+
+window.songMessageTimer = setTimeout(() => {
+  songAdminMessage.textContent = "";
+}, 4000);
   songAdminForm.reset();
 document.getElementById("editSongId").value = "";
 document.getElementById("cancelEditBtn").style.display = "none";
