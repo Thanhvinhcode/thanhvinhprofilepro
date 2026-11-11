@@ -2215,6 +2215,7 @@ function renderAdminSongList() {
 
     info.append(title, artist);
 
+    // NÚT SỬA
     const editButton = document.createElement("button");
     editButton.type = "button";
     editButton.textContent = "✏️ SỬA";
@@ -2232,52 +2233,61 @@ function renderAdminSongList() {
       document.getElementById("newSongCover").value = song.cover || "";
 
       saveSongBtn.textContent = "LƯU THAY ĐỔI";
-      document.getElementById("cancelEditBtn").style.display = "inline-block";
+      document.getElementById("cancelEditBtn").style.display =
+        "inline-block";
 
       songAdminForm.scrollIntoView({ behavior: "smooth" });
     });
 
-// NÚT XÓA BÀI HÁT
-const deleteButton = document.createElement("button");
-deleteButton.type = "button";
-deleteButton.textContent = "🗑️ XÓA";
+    // NÚT XÓA
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.textContent = "🗑️ XÓA";
 
-deleteButton.style.cssText =
-  "padding:10px 18px;background:#e53935;" +
-  "color:white;border:0;border-radius:8px;" +
-  "cursor:pointer;font-weight:bold;";
+    deleteButton.style.cssText =
+      "padding:10px 18px;background:#e53935;" +
+      "color:white;border:0;border-radius:8px;" +
+      "cursor:pointer;font-weight:bold;";
 
-deleteButton.addEventListener("click", async () => {
-  const confirmDelete = confirm(
-    `Bạn có chắc muốn xóa bài "${song.title}" không?`
-  );
+    deleteButton.addEventListener("click", async () => {
+      const confirmDelete = confirm(
+        `Bạn có chắc muốn xóa bài "${song.title}" không?`
+      );
 
-  if (!confirmDelete) return;
+      if (!confirmDelete) return;
 
-  const { error } = await supabase
-    .from("songs")
-    .delete()
-    .eq("id", song.id);
+      try {
+        const { error } = await supabaseClient
+  .from("songs")
+  .delete()
+  .eq("id", song.id);
 
-  if (error) {
-    alert("Xóa thất bại: " + error.message);
-    return;
-  }
+        if (error) {
+          alert("Xóa thất bại: " + error.message);
+          return;
+        }
 
-  alert("Đã xóa bài hát thành công!");
-  await loadSongsFromSupabase();
-});
+        alert("Đã xóa bài hát thành công!");
 
-// Hiển thị hai nút SỬA và XÓA
-const actions = document.createElement("div");
-actions.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;";
+        await loadSongsFromSupabase();
 
-actions.append(editButton, deleteButton);
-item.append(info, actions);
-adminSongList.appendChild(item);
+      } catch (err) {
+        alert("Có lỗi xảy ra: " + err.message);
+      }
+    });
+
+    // NHÓM NÚT
+    const actions = document.createElement("div");
+    actions.style.cssText =
+      "display:flex;gap:8px;flex-wrap:wrap;";
+
+    actions.append(editButton, deleteButton);
+
+    item.append(info, actions);
+    adminSongList.appendChild(item);
   });
 }
-
+// NÚT XÓA BÀI HÁT
 // NÚT MỞ / ĐÓNG DANH SÁCH
 const adminSongArea = document.getElementById("adminSongArea");
 const toggleAdminSongsBtn = document.getElementById("toggleAdminSongsBtn");
@@ -2296,16 +2306,10 @@ toggleAdminSongsBtn.addEventListener("click", () => {
     renderAdminSongList();
   }
 });
-
 // TÌM KIẾM NGAY KHI GÕ
 adminSongSearch.addEventListener("input", () => {
   renderAdminSongList();
 });
-
-
-
-
-
 //Xử lí thêm bài mới
 songAdminForm.addEventListener("submit", async (event) => {
   event.preventDefault();
