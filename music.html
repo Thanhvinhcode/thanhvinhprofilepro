@@ -917,13 +917,35 @@
       <input id="newSongArtist" type="text"
         placeholder="Nhập tên ca sĩ">
 
-      <label>Link MP3</label>
-      <input id="newSongAudio" type="url"
-        placeholder="Dán link MP3 trực tiếp" required>
 
-      <label>Link ảnh bìa</label>
-      <input id="newSongCover" type="url"
-        placeholder="Dán link ảnh bìa">
+<label>Link MP3 (nếu có)</label>
+<input id="newSongAudio" type="url"
+  placeholder="Dán link MP3 trực tiếp nếu muốn">
+
+<label>Hoặc tải file MP3 từ thiết bị</label>
+<input id="newSongFile" type="file"
+  accept=".mp3,audio/mpeg">
+
+<small style="color:#aaa;grid-column:1/-1;">
+  Bạn có thể dán link MP3 hoặc chọn file MP3 từ thiết bị.
+  Chỉ cần sử dụng một trong hai cách.
+</small>
+
+<label>Link ảnh bìa (nếu có)</label>
+<input id="newSongCover" type="url"
+  placeholder="Dán link ảnh bìa">
+
+<label>Hoặc chọn ảnh từ điện thoại / máy tính</label>
+<input
+  id="newSongCoverFile"
+  type="file"
+  accept="image/*"
+>
+
+<small style="color:#2ee255;grid-column:1/-1;">
+  Có thể dán link ảnh hoặc chọn ảnh trực tiếp từ thiết bị.
+  Nếu chọn cả hai, ảnh tải lên sẽ được ưu tiên.
+</small>
 
       <button type="submit" id="saveSongBtn">
         + THÊM BÀI HÁT
@@ -2371,79 +2393,213 @@ toggleAdminSongsBtn.addEventListener("click", () => {
 adminSongSearch.addEventListener("input", () => {
   renderAdminSongList();
 });
-//Xử lí thêm bài mới
+
+// XỬ LÝ NÚT HỦY CHỈNH SỬA
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+cancelEditBtn.addEventListener("click", function () {
+
+  // Xóa nội dung trong biểu mẫu
+  songAdminForm.reset();
+
+  // Thoát chế độ chỉnh sửa
+  document.getElementById("editSongId").value = "";
+
+  // Đổi nút lưu về trạng thái thêm bài hát
+  saveSongBtn.textContent = "+ THÊM BÀI HÁT";
+
+  // Ẩn nút hủy chỉnh sửa
+  cancelEditBtn.style.display = "none";
+
+  // Thông báo
+  songAdminMessage.textContent = "Đã hủy chỉnh sửa bài hát!";
+  songAdminMessage.style.color = "#1ed760";
+
+});
+
+
+// XỬ LÝ THÊM VÀ CẬP NHẬT BÀI HÁT
 songAdminForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-const editId = document.getElementById("editSongId").value;
+
+  const editId = document.getElementById("editSongId").value;
   const title = document.getElementById("newSongTitle").value.trim();
   const artist = document.getElementById("newSongArtist").value.trim();
-  const audioUrl = document.getElementById("newSongAudio").value.trim();
-  const coverUrl = document.getElementById("newSongCover").value.trim();
 
-  saveSongBtn.disabled = true;
-  saveSongBtn.textContent = "ĐANG LƯU...";
+  let audioUrl = document.getElementById("newSongAudio").value.trim();
 
+  const audioFile = document.getElementById("newSongFile").files[0];
 
-let result;
-
-if (editId) {
-  // Cập nhật bài hát đang chọn
-  result = await supabaseClient
-    .from("songs")
-    .update({
-      title: title,
-      artist: artist,
-      audio_url: audioUrl,
-      cover_url: coverUrl
-    })
-    .eq("id", editId);
-} else {
-  // Giữ nguyên chức năng thêm bài hát cũ
-  result = await supabaseClient
-    .from("songs")
-    .insert([{
-      title: title,
-      artist: artist,
-      audio_url: audioUrl,
-      cover_url: coverUrl
-    }]);
-}
-const { error } = result;
-  saveSongBtn.disabled = false;
-  saveSongBtn.textContent = "+ THÊM BÀI HÁT";
-  if (error) {
-    console.error("Lỗi thêm bài hát:", error);
-    songAdminMessage.textContent = "Không thêm được bài hát: " + error.message;
-    songAdminMessage.style.color = "#ff5555";
+let coverUrl = document.getElementById("newSongCover").value.trim();
+const coverFile = document.getElementById("newSongCoverFile").files[0];
+  // Kiểm tra tên bài hát
+  if (!title) {
+    alert("Vui lòng nhập tên bài hát!");
     return;
   }
-songAdminMessage.textContent = editId
-  ? "Đã cập nhật bài hát thành công!"
-  : "Đã thêm bài hát thành công!";
+
+  // Nếu chọn file MP3 thì ưu tiên tải file lên
+  if (audioFile) {
+    if (!audioFile.type.includes("audio") &&
+        !audioFile.name.toLowerCase().endsWith(".mp3")) {
+      alert("Vui lòng chọn file MP3 hợp lệ!");
+      return;
+    }
+
+    // Giới hạn 50 MB theo bucket hiện tại
+    if (audioFile.size > 50 * 1024 * 1024) {
+      alert("File MP3 vượt quá 50 MB. Vui lòng chọn file nhỏ hơn!");
+      return;
+    }
+
+    audioUrl = "";
+  }
+
+  // Nếu sửa bài mà không chọn file mới và không dán link,
+  // giữ lại đường dẫn MP3 đang có trong biểu mẫu.
+  if (!audioUrl && !audioFile) {
+    alert("Vui lòng dán link MP3 hoặc chọn file MP3!");
+    return;
+  }
+
+  saveSongBtn.disabled = true;
+
+  try {
+    // TẢI FILE MP3 LÊN SUPABASE STORAGE
+    if (audioFile) {
+      saveSongBtn.textContent = "ĐANG TẢI MP3 LÊN...";
+
+      const safeName = audioFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const filePath = Date.now() + "-" + safeName;
+
+      const { error: uploadError } = await supabaseClient
+        .storage
+        .from("music-files")
+        .upload(filePath, audioFile, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: "audio/mpeg"
+        });
+
+      if (uploadError) {
+        throw new Error("Tải MP3 thất bại: " + uploadError.message);
+      }
+
+      const { data: publicData } = supabaseClient
+        .storage
+        .from("music-files")
+        .getPublicUrl(filePath);
+
+audioUrl = publicData.publicUrl;
+
+// Hiển thị link MP3 Supabase vừa tạo vào ô Link MP3
+document.getElementById("newSongAudio").value = audioUrl;
+
+console.log("LINK MP3 ĐÃ TẠO:", audioUrl);
+    }
+
+    saveSongBtn.textContent = "ĐANG LƯU BÀI HÁT...";
+// TẢI ẢNH BÌA LÊN SUPABASE STORAGE
+if (coverFile) {
+  if (!coverFile.type.startsWith("image/")) {
+    throw new Error("Vui lòng chọn file ảnh hợp lệ!");
+  }
+
+  if (coverFile.size > 10 * 1024 * 1024) {
+    throw new Error("Ảnh vượt quá 10 MB. Vui lòng chọn ảnh nhỏ hơn!");
+  }
+
+  saveSongBtn.textContent = "ĐANG TẢI ẢNH LÊN...";
+
+  const safeCoverName = coverFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const coverPath = Date.now() + "-" + safeCoverName;
+
+  const { error: coverUploadError } = await supabaseClient
+    .storage
+    .from("music-covers")
+    .upload(coverPath, coverFile, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: coverFile.type
+    });
+
+  if (coverUploadError) {
+    throw new Error("Tải ảnh thất bại: " + coverUploadError.message);
+  }
+
+  const { data: coverPublicData } = supabaseClient
+    .storage
+    .from("music-covers")
+    .getPublicUrl(coverPath);
+
+  coverUrl = coverPublicData.publicUrl;
+
+  document.getElementById("newSongCover").value = coverUrl;
+
+  console.log("LINK ẢNH ĐÃ TẠO:", coverUrl);
+}
+    let result;
+
+    if (editId) {
+      // CẬP NHẬT BÀI HÁT
+      result = await supabaseClient
+        .from("songs")
+        .update({
+          title: title,
+          artist: artist,
+          audio_url: audioUrl,
+          cover_url: coverUrl
+        })
+        .eq("id", editId);
+    } else {
+      // THÊM BÀI HÁT MỚI
+      result = await supabaseClient
+        .from("songs")
+        .insert([{
+          title: title,
+          artist: artist,
+          audio_url: audioUrl,
+          cover_url: coverUrl
+        }]);
+    }
+
+    if (result.error) {
+      throw new Error(result.error.message);
+    }
+
+    songAdminMessage.textContent = editId
+      ? "Đã cập nhật bài hát thành công!"
+      : "Đã thêm bài hát thành công!";
+
     songAdminMessage.style.color = "#1ed760";
-    // HIỂN THỊ THÔNG BÁO THÀNH CÔNG
-songAdminMessage.style.cssText =
-  "display:block;" +
-  "padding:12px 16px;" +
-  "margin:12px 0;" +
-  "background:rgba(30,215,96,0.15);" +
-  "border:1px solid #1ed760;" +
-  "border-radius:10px;" +
-  "color:#1ed760;" +
-  "font-weight:bold;" +
-  "font-size:15px;";
 
-// TỰ ẨN SAU 4 GIÂY
-clearTimeout(window.songMessageTimer);
+// XÓA SẠCH FORM SAU KHI LƯU THÀNH CÔNG
+songAdminForm.reset();
 
-window.songMessageTimer = setTimeout(() => {
-  songAdminMessage.textContent = "";
-}, 4000);
-  songAdminForm.reset();
-document.getElementById("editSongId").value = "";
-document.getElementById("cancelEditBtn").style.display = "none";
-  // Tải lại danh sách nhạc
-  await loadSongsFromSupabase();
+document.getElementById("newSongAudio").value = "";
+document.getElementById("newSongCover").value = "";
+
+document.getElementById("newSongFile").value = "";
+document.getElementById("newSongCoverFile").value = "";
+
+    saveSongBtn.textContent = "+ THÊM BÀI HÁT";
+
+    // TẢI LẠI DANH SÁCH NHẠC
+    await loadSongsFromSupabase();
+
+  } catch (error) {
+    console.error("Lỗi lưu bài hát:", error);
+
+    songAdminMessage.textContent = error.message;
+    songAdminMessage.style.color = "#ff5555";
+
+  } finally {
+    saveSongBtn.disabled = false;
+
+    if (!document.getElementById("editSongId").value) {
+      saveSongBtn.textContent = "+ THÊM BÀI HÁT";
+    }
+  }
 });
 
 // Hiển thị danh sách nhạc từ Supabase nhưng vẫn giữ nhạc cũ
