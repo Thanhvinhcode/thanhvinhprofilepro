@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+  
   <!-- =========================================================
        1. THÔNG TIN CƠ BẢN CỦA WEBSITE
        Chỉnh các dòng trong phần này để đổi tên, mô tả, màu trình duyệt.
@@ -15,6 +16,84 @@
   <meta property="og:description" content="Nơi lưu giữ hành trình, thành tựu và những dấu mốc đáng nhớ.">
   <meta property="og:image" content="">
   <title>Hồ sơ cá nhân | Personal Archive</title>
+
+
+
+
+<script>
+(function () {
+    // Tắt khôi phục vị trí cuộn tự động
+    if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+    }
+
+    // Đánh dấu khi người dùng nhấn F5 hoặc Ctrl + R
+    window.addEventListener("keydown", function (event) {
+        if (
+            event.key === "F5" ||
+            (event.ctrlKey && event.key.toLowerCase() === "r")
+        ) {
+            sessionStorage.setItem("forcePageTop", "1");
+        }
+    }, true);
+
+    const navigation = performance.getEntriesByType("navigation")[0];
+
+    // Xác định đây có phải lần tải lại trang không
+    const isReload = navigation && navigation.type === "reload";
+    const isForcedReload = sessionStorage.getItem("forcePageTop") === "1";
+
+    if (!isReload && !isForcedReload) return;
+
+    // Xóa dấu đánh dấu để không ảnh hưởng lần truy cập sau
+    sessionStorage.removeItem("forcePageTop");
+
+    // Xóa vị trí neo cũ trong URL
+    if (location.hash) {
+        history.replaceState(
+            null,
+            "",
+            location.pathname + location.search
+        );
+    }
+
+    function goTop() {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "instant"
+        });
+
+        document.documentElement.scrollTop = 0;
+
+        if (document.body) {
+            document.body.scrollTop = 0;
+        }
+    }
+
+    // Đưa trang về đầu sau khi trình duyệt khôi phục trạng thái
+    window.addEventListener("pageshow", function () {
+        goTop();
+
+        let count = 0;
+
+        const retry = setInterval(function () {
+            goTop();
+            count++;
+
+            if (count >= 20) {
+                clearInterval(retry);
+            }
+        }, 100);
+    });
+
+    document.addEventListener("DOMContentLoaded", goTop);
+    window.addEventListener("load", goTop);
+})();
+</script>
+
+
+
 
   <!-- =========================================================
        2. CSS - TOÀN BỘ GIAO DIỆN
@@ -458,6 +537,7 @@
         <a href="#documents">Minh chứng</a>
         <a href="#contact">Liên hệ</a>
         <a href="music.html">♫ Góc âm nhạc</a>
+        <a href="PhotoCute-Studio.html">Tạo Ảnh </a>
        <a href="game-center.html">🎮 Trò chơi</a>
 
 
