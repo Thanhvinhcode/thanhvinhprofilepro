@@ -60,20 +60,48 @@ window.PC_CONFIG = {
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Nunito:wght@400;700;800&family=Baloo+2:wght@500;700;800&family=Pacifico&family=Dancing+Script:wght@500;700&family=Lobster&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Itim&display=swap&subset=vietnamese" rel="stylesheet">
 <link rel="stylesheet" href="css/base.css"><link rel="stylesheet" href="css/home.css">
+<style>
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  text-decoration: none;
+  border-radius: 50%;
+}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-<a class="btn ghost"
-   href="https://profilethanhvinh.id.vn/"
-   target="_top"
-   rel="noopener">
-  ← Về trang cá nhân
-</a>
+<header class="top">
+    <a class="btn ghost" href="https://profilethanhvinh.id.vn/" target="_top" rel="noopener">
+      ← Về trang cá nhân
+    </a>
 
-    <a class="logo" href="index.html"><span class="mark">📸</span><span>PhotoCute<small>STUDIO</small></span></a>
-    <a class="btn primary" href="#library" id="startTop">🎀 <span>Bắt đầu thiết kế</span></a>
-  </header>
+    <a class="logo" href="index.html">
+      <span class="mark">📸</span>
+      <span>PhotoCute<small>STUDIO</small></span>
+    </a>
+
+    <div class="top-actions">
+      <a class="btn ghost admin-icon"
+         href="admin.html"
+         title="Quản trị"
+         aria-label="Quản trị">⚙️</a>
+
+      <a class="btn primary" href="#library" id="startTop">
+        🎀 <span>Bắt đầu thiết kế</span>
+      </a>
+    </div>
+</header>
 
   <section class="hero">
     <span class="deco" style="left:4%;top:30px">🧸</span><span class="deco" style="right:5%;top:20px;animation-delay:.8s">🎀</span>
@@ -108,7 +136,7 @@ window.PC_CONFIG = {
       <div class="step"><div class="n">3</div><h3>Tải về</h3><p>Xem trước rồi xuất ảnh chất lượng cao hoặc PDF nhiều trang.</p></div>
     </div>
   </section>
-  <footer>Made with 💗 PhotoCute Studio · <a href="admin.html">Quản trị</a> · <a href="help.html">Hướng dẫn &amp; SQL</a></footer>
+<footer>Made with 💗 PhotoCute Studio</footer>
 </div>
 <script src="js/config.js"><@/script><script src="js/utils.js"><@/script><script src="js/stickers-builtin.js"><@/script><script src="js/render.js"><@/script>
 <script src="js/store-local.js"><@/script><script src="js/store-supabase.js"><@/script><script src="js/store.js"><@/script>
@@ -176,6 +204,13 @@ window.PC_CONFIG = {
 <script src="js/config.js"><@/script><script src="js/utils.js"><@/script><script src="js/stickers-builtin.js"><@/script><script src="js/render.js"><@/script>
 <script src="js/store-local.js"><@/script><script src="js/store-supabase.js"><@/script><script src="js/store.js"><@/script><script src="js/pdf.js"><@/script>
 <script src="js/editor.js"><@/script>
+    
+
+
+
+
+
+    
 </body>
 </html>
 </script>
@@ -274,355 +309,6 @@ window.PC_CONFIG = {
 <script src="js/store-local.js"><@/script><script src="js/store-supabase.js"><@/script><script src="js/store.js"><@/script>
 <script src="js/admin-actions.js"><@/script><script src="js/sticker-tools.js"><@/script>
 <script src="js/designer-state.js"><@/script><script src="js/designer-canvas.js"><@/script><script src="js/designer-panels.js"><@/script><script src="js/designer.js"><@/script>
-</body>
-</html>
-</script>
-<!-- ======================= FILE: help.html ======================= -->
-<script type="text/plain" data-file="help.html">
-<!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hướng dẫn · PhotoCute Studio</title>
-<style>
-  body { margin: 0; background: #fff8ee; color: #4a3a55; font: 16px/1.65 'Quicksand', 'Nunito', system-ui, sans-serif; }
-  main { max-width: 860px; margin: 0 auto; padding: 20px 18px 60px; }
-  h1, h2, h3 { font-family: 'Baloo 2', 'Quicksand', sans-serif; color: #4a3a55; }
-  h2 { margin-top: 34px; border-bottom: 3px dotted #f1dff0; padding-bottom: 6px; }
-  code { background: #ffe4ef; padding: 1px 6px; border-radius: 6px; font-size: .92em; }
-  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: .95em; }
-  th, td { border: 2px solid #f1dff0; padding: 6px 10px; text-align: left; vertical-align: top; }
-  th { background: #efe8ff; }
-  blockquote { margin: 10px 0; padding: 8px 14px; background: #fff; border-left: 5px solid #ff8fb8; border-radius: 10px; }
-  .code { position: relative; margin: 12px 0; }
-  .code pre { background: #4a3a55; color: #fff; padding: 14px; border-radius: 14px; overflow: auto; max-height: 420px; font-size: 13px; line-height: 1.5; white-space: pre; }
-  .code button { position: absolute; right: 10px; top: 10px; border: 0; background: #ff8fb8; color: #fff; font-weight: 800; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
-  a.back { display: inline-block; margin-bottom: 10px; font-weight: 800; color: #f0609a; }
-</style>
-</head>
-<body>
-<main>
-<a class="back" href="index.html">← Về trang chủ</a>
-<h1>📸 PhotoCute Studio – Hướng dẫn sử dụng</h1>
-<p>Website thiết kế photobook cute: <b>người dùng</b> chọn mẫu → thay ảnh → tải ảnh/PDF. <b>Bạn (Admin)</b> tự thiết kế mẫu bằng bàn thiết kế giống PowerPoint rồi bấm <b>Đăng lên trang chính</b> là xong, không phải sửa code.</p>
-<hr>
-<h2>0. Đây là bản MỘT FILE</h2>
-<p>Toàn bộ website (trang chủ, trình chỉnh sửa của người dùng, trang Admin, bàn thiết kế, 120 mẫu có sẵn, hướng dẫn này) nằm gọn trong <b>một file duy nhất: <code>PhotoCute-Studio.html</code></b>. Không cần giải nén hay cài đặt gì.</p>
-<p>Địa chỉ trong file: <code>…?p=index</code> (trang chủ) · <code>?p=admin</code> (Admin) · <code>?p=designer</code> (bàn thiết kế) · <code>?p=editor</code> (người dùng) · <code>?p=help</code> (hướng dẫn). Bạn chỉ cần mở file; các trang tự chuyển qua lại.</p>
-<p>Dữ liệu (mẫu, sticker, cấu hình) lưu <b>tách riêng</b> khỏi file này (trong trình duyệt hoặc trên Supabase), nên thay bằng bản file mới <b>không làm mất dữ liệu</b>.</p>
-<hr>
-<h2>1. Chạy thử ngay trên máy (chế độ Local)</h2>
-<p>Nhấp đúp <code>PhotoCute-Studio.html</code> để mở bằng <b>Chrome hoặc Edge</b> (khuyên dùng). Muốn vào Admin: thêm <code>?p=admin</code> sau địa chỉ, hoặc bấm <b>Quản trị</b> ở cuối trang chủ.</p>
-<p>Khi chưa điền Supabase, website chạy <b>chế độ Local</b>:</p>
-<ul>
-<li>Mẫu và sticker lưu <b>trong trình duyệt của bạn</b> (IndexedDB), người khác sẽ <b>không</b> thấy.</li>
-<li>Lần đầu vào Admin bạn tạo <b>mật khẩu Admin</b>.</li>
-<li>Chỉ để thử nghiệm. Mất dữ liệu nếu xóa dữ liệu trình duyệt, nên dùng <b>💾 Sao lưu</b> thường xuyên.</li>
-<li>Mật khẩu Local chỉ là “khóa cửa” trên máy bạn, <b>không</b> phải bảo mật thật sự. Muốn bảo mật thật → dùng Supabase (phần 2).</li>
-</ul>
-<hr>
-<h2>2. Đưa lên mạng bằng Supabase (khuyên dùng)</h2>
-<p>Supabase miễn phí cho dự án nhỏ. Mọi người cùng thấy mẫu bạn đăng, và quyền Admin được <b>máy chủ kiểm tra</b> (không thể vượt qua bằng cách sửa JavaScript).</p>
-<h3>Bước 1. Tạo dự án</h3>
-<ul>
-<li>Vào &lt;https://supabase.com> → đăng ký → <b>New project</b>.</li>
-<li>Đặt tên (ví dụ <code>photocute</code>), đặt mật khẩu cơ sở dữ liệu (lưu lại), chọn vùng gần Việt Nam (Singapore) → <b>Create</b>. Đợi vài phút.</li>
-</ul>
-<h3>Bước 2. Tạo bảng và phân quyền</h3>
-<ul>
-<li>Menu trái → <b>SQL Editor</b> → <b>New query</b>.</li>
-<li>Mở file <code>tools/supabase-setup.sql</code>, <b>copy toàn bộ</b>, dán vào → bấm <b>Run</b>.</li>
-<li>Thấy “Success” là xong. (Chạy lại nhiều lần cũng an toàn.)</li>
-</ul>
-<h3>Bước 3. Tạo tài khoản Admin</h3>
-<ul>
-<li><b>Authentication → Users → Add user → Create new user</b>: nhập email + mật khẩu của bạn, tick <b>Auto Confirm User</b>.</li>
-<li>Quay lại <b>SQL Editor</b>, chạy đúng 1 dòng này (thay email của bạn):</li>
-</ul>
-<div class="code"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent).then(function(){event.target.textContent='Đã chép ✓'})">Sao chép</button><pre>insert into public.admins (user_id)
-select id from auth.users where email = 'email-cua-ban@gmail.com'
-on conflict do nothing;</pre></div>
-<ul>
-<li>Nên tắt đăng ký tự do: <b>Authentication → Sign In / Providers → tắt “Allow new users to sign up”</b>. (Dù có ai đăng ký được thì cũng <b>không</b> có quyền Admin, nhưng tắt đi cho gọn.)</li>
-</ul>
-<h3>Bước 4. Lấy khóa kết nối và dán vào file</h3>
-<ul>
-<li><b>Project Settings → API</b> (hoặc <b>API Keys</b>): copy <b>Project URL</b> và khóa <b>anon / public</b>.</li>
-<li>Mở <code>PhotoCute-Studio.html</code> bằng <b>Notepad / TextEdit</b> (chuột phải → Open with). Ngay đầu file bạn sẽ thấy khối <code>window.PC_CONFIG</code>. Điền vào giữa hai dấu nháy:</li>
-</ul>
-<div class="code"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent).then(function(){event.target.textContent='Đã chép ✓'})">Sao chép</button><pre>window.PC_CONFIG = {
-  SUPABASE_URL: 'https://xxxxxxxx.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJhbGciOi...',
-  BUCKET: 'photocute'
-};</pre></div>
-<p>Lưu file lại.</p>
-<blockquote>✅ Khóa <b>anon</b> là khóa công khai, được phép để ở đây.</blockquote>
-<blockquote>❌ <b>TUYỆT ĐỐI KHÔNG</b> dán khóa <b>service_role</b> vào file.</blockquote>
-<h3>Bước 5. Đưa website lên mạng</h3>
-<p>Đổi tên file thành <b><code>index.html</code></b>, cho vào một thư mục rồi kéo-thả thư mục đó vào:</p>
-<ul>
-<li><b>Netlify Drop</b> (&lt;https://app.netlify.com/drop>), dễ nhất; hoặc <b>Cloudflare Pages</b> / <b>GitHub Pages</b>.</li>
-</ul>
-<p>Sau khi có địa chỉ website (ví dụ <code>https://photocute.netlify.app</code>):</p>
-<ul>
-<li>Vào <code>…/?p=admin</code> → đăng nhập bằng <b>email + mật khẩu</b> ở Bước 3.</li>
-<li>Tại tab <b>Mẫu</b> bấm <b>“📥 Nạp 120 mẫu có sẵn”</b> một lần (khoảng 1–3 phút).</li>
-<li>Mở trang chính để kiểm tra: 120 mẫu đã hiện cho mọi người.</li>
-</ul>
-<h3>Lưu ý khi dùng gói miễn phí</h3>
-<ul>
-<li>Dung lượng có hạn (kiểm tra trong Supabase). Ảnh sticker được tự thu nhỏ khi tải lên để tiết kiệm.</li>
-<li>Dự án miễn phí có thể <b>tạm dừng nếu lâu không có hoạt động</b>; vào Supabase bấm *Restore* là chạy lại, dữ liệu vẫn còn.</li>
-<li>Đổi mật khẩu Admin: ở Supabase → Authentication → Users.</li>
-</ul>
-<hr>
-<h2>3. Làm việc hằng ngày của Admin</h2>
-<h3>3.1. Tạo mẫu mới</h3>
-<p><code>admin.html</code> → <b>➕ Tạo mẫu mới</b> → đặt tên, chọn danh mục (hoặc tạo danh mục mới), chọn cỡ trang → <b>Tạo và thiết kế</b>.</p>
-<h3>3.2. Bàn thiết kế (kiểu PowerPoint)</h3>
-<ul>
-<li><b>Bảng trái – ➕ Thêm:</b> khung ảnh (Polaroid, vuông, chữ nhật, tròn, tim, vòm, sao), văn bản, hình (vuông, tròn, đường kẻ, tim, sao…), <b>màu nền / họa tiết / ảnh nền</b> của trang.</li>
-<li><b>Bảng trái – 🧸 Sticker:</b> bấm hoặc <b>kéo thả</b> sticker vào trang. Có tìm kiếm + danh mục.</li>
-<li><b>Canvas giữa:</b> bấm vào đối tượng để chọn.</li>
-<li>Kéo thân để <b>di chuyển</b> (có đường gióng hít vào giữa trang / mép các đối tượng khác; giữ <code>Alt</code> để tắt).</li>
-<li>Kéo <b>ô vuông ở góc/cạnh</b> để <b>đổi kích thước</b>.</li>
-<li>Kéo <b>nút hồng ↻ phía trên</b> để <b>xoay tự do 0–360°</b> (giữ <code>Shift</code> để xoay theo mốc 15°). Cũng có thể gõ số độ ở bảng phải.</li>
-<li><b>Thanh công cụ ngữ cảnh</b> (dưới thanh trên cùng): nhân bản, xóa, lên/xuống lớp, khóa, ẩn, căn trái/giữa/phải/trên/dưới, lật ngang.</li>
-<li><b>Bảng phải – Thuộc tính:</b> vị trí, kích thước, góc xoay, độ trong suốt, màu (bảng màu <b>và mã HEX</b>), viền, độ dày viền, bo góc, bóng đổ, phông chữ, cỡ chữ…</li>
-<li><b>Khung ảnh:</b> đổi kiểu Polaroid / vuông / chữ nhật / tròn / tim…, màu viền, độ dày viền, bo góc, bóng đổ, màu ô trống.</li>
-<li><b>Văn bản:</b> tick <b>“✏️ Cho phép người dùng sửa chữ này”</b> nếu muốn người dùng đổi nội dung (ví dụ tên, ngày tháng).</li>
-<li><b>Bảng phải – 🗂️ Layer:</b> danh sách lớp (trên cùng ở đầu). <b>Kéo thả để đổi thứ tự</b>, bấm 👁️ ẩn/hiện, 🔓 khóa, 🗑️ xóa, <b>bấm đúp</b> vào tên để đổi tên.</li>
-<li><b>Dải trang phía dưới:</b> ➕ Trang mới, 📋 Nhân bản trang, ◀ ▶ dời trang, 🗑️ xóa trang. Mỗi mẫu có nhiều trang (xuất PDF nhiều trang).</li>
-</ul>
-<p><b>Phím tắt:</b> <code>Delete</code> xóa · <code>Ctrl+D</code> nhân bản · <code>Ctrl+C / V</code> sao chép / dán · <code>Ctrl+Z / Y</code> hoàn tác / làm lại · <code>Ctrl+S</code> lưu · phím mũi tên dịch 1px (<code>Shift</code> = 10px) · <code>Esc</code> bỏ chọn · <code>Ctrl</code> + lăn chuột để phóng to.</p>
-<blockquote>🔒 Công cụ xoay, layer, sticker… <b>chỉ có ở Admin</b>. Người dùng thường chỉ thấy giao diện đơn giản để thay ảnh.</blockquote>
-<h3>3.3. Thêm sticker của riêng bạn</h3>
-<p>Bàn thiết kế → tab 🧸 Sticker → <b>⬆️ Tải sticker từ máy</b> (hoặc tab <b>🧸 Kho sticker</b> ở trang quản lý, có thể kéo thả nhiều ảnh một lúc).</p>
-<ul>
-<li>Hỗ trợ <b>PNG, WebP, JPG</b>. Nên dùng <b>PNG nền trong suốt</b>.</li>
-<li>Đặt <b>tên</b> và chọn <b>danh mục</b> (nơ, gấu/thỏ/mèo, hoa/tim/sao, mỹ phẩm/túi/giày, nhân vật, đồ ăn, chữ trang trí, cảm xúc… hoặc tạo danh mục mới).</li>
-<li>Ảnh có nền (nền trắng chẳng hạn)? Tick <b>✂️ Xóa nền ảnh</b>, bấm vào đúng màu nền trên ảnh, kéo <b>Độ mạnh</b> cho sạch, bật <b>Làm mềm viền</b>. Công cụ này chạy ngay trên máy bạn, hợp với nền đồng màu. Ảnh nền phức tạp (ảnh chụp người, nền nhiều màu) nên tách nền bằng công cụ chuyên dụng (ví dụ remove.bg) rồi tải PNG kết quả lên.</li>
-<li>Không giới hạn số lượng sticker. Kho sticker lưu riêng với mẫu.</li>
-<li>⚠️ Xóa một sticker khỏi kho thì mẫu đang dùng nó sẽ hiện khung “Ảnh bị mất”. Hãy thay sticker trước khi xóa.</li>
-</ul>
-<h3>3.4. Lưu, xem trước, đăng</h3>
-<p>Các nút trên cùng của bàn thiết kế:</p>
-<ul>
-<li><b>💾 Lưu nháp</b> (cũng <b>tự lưu mỗi ~25 giây</b> và khi bạn rời trang).</li>
-<li><b>👀 Xem trước:</b> mở mẫu đúng như người dùng sẽ thấy.</li>
-<li><b>🚀 Đăng lên trang chính:</b> mẫu xuất hiện ngay trong thư viện, kèm ảnh thumbnail, tên, danh mục, ngày tạo. Mẫu cần có ít nhất 1 khung ảnh.</li>
-<li><b>⋯ Thêm:</b> <b>Nhân bản mẫu</b>, <b>Gỡ khỏi trang chính</b>, <b>Xóa mẫu</b>.</li>
-</ul>
-<p><b>Bản nháp và bản đã đăng tách riêng:</b> sau khi đăng, bạn sửa tiếp vẫn <b>không ảnh hưởng người dùng</b> cho đến khi bấm <b>Đăng lại (cập nhật)</b>.</p>
-<h3>3.5. Quản lý và sắp xếp thứ tự mẫu</h3>
-<p><code>admin.html</code> → tab <b>🎀 Mẫu</b>:</p>
-<ul>
-<li><b>Kéo thả</b> hàng (biểu tượng ☰) để đổi thứ tự → <b>thứ tự này chính là thứ tự trên trang chủ</b>.</li>
-<li>⏫ đưa lên đầu · 🔼 🔽 lên/xuống 1 bậc · ⏬ đưa xuống cuối (trên điện thoại dùng các nút này).</li>
-<li>⭐ đánh dấu <b>nổi bật</b> · 👁️ <b>ẩn/hiện</b> · ✏️ <b>chỉnh sửa</b> · 🔍 xem thử · 📋 nhân bản · 🚀 đăng · ⛔ gỡ · 🗑️ xóa.</li>
-<li>Ô tìm kiếm theo tên, lọc theo danh mục và trạng thái.</li>
-</ul>
-<h3>3.6. Sao lưu (nên làm mỗi tuần)</h3>
-<p>Tab <b>💾 Sao lưu</b> → <b>Tải bản sao lưu</b> (1 file <code>.json</code> gồm mẫu, sticker, ảnh nền, cấu hình). Khi cần khôi phục: <b>Nhập bản sao lưu</b> (dữ liệu hiện có không bị xóa; mục trùng mã sẽ được ghi đè).</p>
-<hr>
-<h2>4. Người dùng làm gì?</h2>
-<ul>
-<li>Chọn mẫu ở trang chủ (tìm kiếm, danh mục, nổi bật, mới nhất).</li>
-<li>Bấm vào khung ảnh để chọn ảnh (hoặc <b>Tải ảnh của bạn</b> nhiều ảnh một lượt, rồi bấm ảnh để đặt vào khung, hoặc <b>🪄 Tự điền</b>).</li>
-<li>Kéo ảnh trong khung để căn vị trí, dùng thanh/lăn chuột để phóng to.</li>
-<li>Sửa chữ (nếu mẫu cho phép), <b>Xem trước</b>, rồi <b>Tải về</b>: PNG (chuẩn / cao / rất cao), PNG nhiều trang, hoặc <b>PDF nhiều trang</b>.</li>
-</ul>
-<p>Ảnh của người dùng chỉ xử lý <b>ngay trên máy họ</b>, không bị tải lên máy chủ.</p>
-<hr>
-<h2>5. Xử lý sự cố</h2>
-<table>
-<tr><th>Hiện tượng</th><th>Cách xử lý</th></tr>
-<tr><td>Admin báo “Tài khoản này chưa được cấp quyền Admin”</td><td>Chưa chạy dòng <code>insert into public.admins …</code> ở Bước 3, hoặc gõ sai email.</td></tr>
-<tr><td>Báo “Không kết nối được máy chủ Supabase”</td><td>Kiểm tra <code>SUPABASE_URL</code> trong <code>js/config.js</code>, kiểm tra mạng, dự án có đang bị tạm dừng không.</td></tr>
-<tr><td>Trang chủ trống dù đã nạp mẫu</td><td>Mẫu chưa <b>đăng</b> hoặc đang <b>ẩn</b>. Vào Admin → tab Mẫu xem trạng thái.</td></tr>
-<tr><td>“Không lưu được” khi lưu/đăng</td><td>Thường do hết phiên đăng nhập (đăng nhập lại) hoặc đầy dung lượng. Dùng 💾 Sao lưu rồi dọn bớt.</td></tr>
-<tr><td>Chữ không đúng phông cute</td><td>Máy đang offline nên không tải được phông Google Fonts; có mạng là hiện đúng.</td></tr>
-<tr><td>Trang trắng khi mở file</td><td>Hãy dùng Chrome hoặc Edge bản mới.</td></tr>
-<tr><td>Quên mật khẩu (chế độ Local)</td><td>Không khôi phục được mật khẩu Local. Hãy dùng Supabase, hoặc nhập file sao lưu vào trình duyệt mới và tạo mật khẩu mới.</td></tr>
-</table>
-<hr>
-<h2>6. Dành cho người sửa code sau này</h2>
-<p>File này được tạo tự động từ mã nguồn nhiều file (<code>node tools/build-single.js</code>). Muốn sửa giao diện/tính năng, hãy sửa trong mã nguồn rồi dựng lại file; không nên sửa trực tiếp trong file một-file ngoại trừ khối cấu hình <code>PC_CONFIG</code> ở đầu file.</p>
-<hr>
-<h2>Phụ lục: đoạn SQL cho Supabase</h2>
-<p>Bấm <b>Sao chép</b> rồi dán vào Supabase → SQL Editor → Run.</p>
-<div class="code"><button onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent).then(function(){event.target.textContent='Đã chép ✓'})">Sao chép</button><pre>-- =====================================================================
---  PHOTOCUTE STUDIO – THIẾT LẬP SUPABASE (chạy MỘT LẦN)
---  Cách dùng: Supabase → SQL Editor → New query → dán TOÀN BỘ file này → Run.
---  Chạy lại nhiều lần vẫn an toàn (không mất dữ liệu).
---
---  Sau khi chạy xong, làm tiếp 2 bước (xem HUONG-DAN.md):
---    1) Authentication → Users → "Add user" → tạo tài khoản Admin (email + mật khẩu).
---    2) Chạy thêm 1 dòng cấp quyền Admin (nằm ở cuối file, bỏ dấu -- rồi thay email).
---
---  Mô hình bảo mật:
---    - Người dùng thường (chưa đăng nhập) chỉ ĐỌC được mẫu đã đăng và ẩn=false.
---    - Mọi thao tác ghi/xóa (mẫu, sticker, ảnh, cài đặt) đòi hỏi tài khoản nằm trong
---      bảng "admins". Việc kiểm tra do máy chủ Postgres (RLS) thực hiện, không thể
---      vượt qua bằng cách sửa mã JavaScript trên trình duyệt.
--- =====================================================================
-
--- ---------- 1. Bảng Admin + hàm kiểm tra quyền ----------
-create table if not exists public.admins (
-  user_id uuid primary key references auth.users (id) on delete cascade
-);
-alter table public.admins enable row level security;   -- không tạo policy => không ai đọc/ghi trực tiếp
-
-create or replace function public.is_admin()
-returns boolean
-language sql stable security definer
-set search_path = public
-as $$
-  select exists (select 1 from public.admins a where a.user_id = auth.uid());
-$$;
-revoke all on function public.is_admin() from public;
-grant execute on function public.is_admin() to anon, authenticated;
-
--- ---------- 2. Bảng mẫu photobook ----------
--- sort_order: thứ tự trên trang chính (nhỏ = đứng trước)
--- live      : bản ĐÃ ĐĂNG (người dùng nhìn thấy). Bản nháp nằm ở bảng template_drafts.
-create table if not exists public.templates (
-  id                 text primary key,
-  name               text             not null default '',
-  category           text             not null default '',
-  sort_order         double precision not null default 0,
-  featured           boolean          not null default false,
-  hidden             boolean          not null default false,
-  published          boolean          not null default false,
-  seed               boolean          not null default false,
-  w                  integer          not null default 900,
-  h                  integer          not null default 1200,
-  allow_text         boolean          not null default true,
-  page_count         integer          not null default 1,
-  thumb_url          text,
-  live_thumb_url     text,
-  live               jsonb,
-  created_at         bigint           not null default 0,
-  updated_at         bigint           not null default 0,
-  content_updated_at bigint           not null default 0,
-  published_at       bigint
-);
-create index if not exists templates_pub_idx on public.templates (published, hidden, sort_order);
-
-create table if not exists public.template_drafts (
-  id   text primary key references public.templates (id) on delete cascade,
-  data jsonb not null
-);
-
--- ---------- 3. Kho sticker / ảnh nền (siêu dữ liệu; file ảnh nằm trong Storage) ----------
-create table if not exists public.assets (
-  id         text primary key,
-  name       text    not null default '',
-  category   text    not null default '',
-  kind       text    not null default 'sticker',
-  w          integer,
-  h          integer,
-  size       bigint  not null default 0,
-  created_at bigint  not null default 0
-);
-create index if not exists assets_created_idx on public.assets (created_at desc);
-
-create table if not exists public.settings (
-  key   text primary key,
-  value jsonb
-);
-
--- ---------- 4. Hàm lưu thứ tự mẫu (kéo thả) ----------
-create or replace function public.reorder_templates(ids text[])
-returns void
-language plpgsql security definer
-set search_path = public
-as $$
-begin
-  if not public.is_admin() then
-    raise exception 'Chỉ Admin mới được đổi thứ tự mẫu' using errcode = '42501';
-  end if;
-  update public.templates t
-     set sort_order = (x.ord - 1)::double precision
-    from unnest(ids) with ordinality as x (id, ord)
-   where t.id = x.id;
-end;
-$$;
-revoke all on function public.reorder_templates(text[]) from public;
-grant execute on function public.reorder_templates(text[]) to authenticated;
-
--- ---------- 5. Quyền truy cập (Row Level Security) ----------
-alter table public.templates       enable row level security;
-alter table public.template_drafts enable row level security;
-alter table public.assets          enable row level security;
-alter table public.settings        enable row level security;
-
-drop policy if exists "pc_templates_public_read" on public.templates;
-create policy "pc_templates_public_read" on public.templates
-  for select to anon, authenticated
-  using (published = true and hidden = false);
-
-drop policy if exists "pc_templates_admin_all" on public.templates;
-create policy "pc_templates_admin_all" on public.templates
-  for all to authenticated
-  using (public.is_admin()) with check (public.is_admin());
-
-drop policy if exists "pc_drafts_admin_all" on public.template_drafts;
-create policy "pc_drafts_admin_all" on public.template_drafts
-  for all to authenticated
-  using (public.is_admin()) with check (public.is_admin());
-
-drop policy if exists "pc_assets_admin_all" on public.assets;
-create policy "pc_assets_admin_all" on public.assets
-  for all to authenticated
-  using (public.is_admin()) with check (public.is_admin());
-
-drop policy if exists "pc_settings_admin_all" on public.settings;
-create policy "pc_settings_admin_all" on public.settings
-  for all to authenticated
-  using (public.is_admin()) with check (public.is_admin());
-
--- Cấp quyền bảng cho các vai trò của Supabase (RLS ở trên mới là lớp chặn thật sự)
-grant select on public.templates to anon, authenticated;
-grant insert, update, delete on public.templates       to authenticated;
-grant select, insert, update, delete on public.template_drafts to authenticated;
-grant select, insert, update, delete on public.assets          to authenticated;
-grant select, insert, update, delete on public.settings        to authenticated;
-
--- ---------- 6. Storage: bucket "photocute" (ai cũng xem được ảnh, chỉ Admin tải lên/xóa) ----------
-insert into storage.buckets (id, name, public)
-values ('photocute', 'photocute', true)
-on conflict (id) do update set public = true;
-
-drop policy if exists "pc_storage_public_read" on storage.objects;
-create policy "pc_storage_public_read" on storage.objects
-  for select to anon, authenticated
-  using (bucket_id = 'photocute');
-
-drop policy if exists "pc_storage_admin_insert" on storage.objects;
-create policy "pc_storage_admin_insert" on storage.objects
-  for insert to authenticated
-  with check (bucket_id = 'photocute' and public.is_admin());
-
-drop policy if exists "pc_storage_admin_update" on storage.objects;
-create policy "pc_storage_admin_update" on storage.objects
-  for update to authenticated
-  using (bucket_id = 'photocute' and public.is_admin())
-  with check (bucket_id = 'photocute' and public.is_admin());
-
-drop policy if exists "pc_storage_admin_delete" on storage.objects;
-create policy "pc_storage_admin_delete" on storage.objects
-  for delete to authenticated
-  using (bucket_id = 'photocute' and public.is_admin());
-
--- ---------- 7. CẤP QUYỀN ADMIN (làm sau khi đã tạo user trong Authentication → Users) ----------
--- Bỏ 2 dấu "--" ở đầu dòng dưới, thay email bằng email Admin của bạn rồi bấm Run:
---
--- insert into public.admins (user_id) select id from auth.users where email = 'email-cua-ban@gmail.com' on conflict do nothing;
-</pre></div>
-
-</main>
 </body>
 </html>
 </script>
@@ -3512,13 +3198,12 @@ window.PC = window.PC || {};
 (function () {
   'use strict';
 
-  var TITLES = {
-    index: 'PhotoCute Studio',
-    editor: 'Chỉnh sửa · PhotoCute Studio',
-    admin: 'Quản trị · PhotoCute Studio',
-    designer: 'Bàn thiết kế · PhotoCute Studio',
-    help: 'Hướng dẫn · PhotoCute Studio'
-  };
+var TITLES = {
+  index: 'PhotoCute Studio',
+  editor: 'Chỉnh sửa · PhotoCute Studio',
+  admin: 'Quản trị · PhotoCute Studio',
+  designer: 'Bàn thiết kế · PhotoCute Studio'
+};
   var base = location.href.split('#')[0].split('?')[0];   // địa chỉ file hiện tại (không kèm ?...)
   var curQuery = '';                                      // phần ?id=... của trang đang mở
   var frame = null;
